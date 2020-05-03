@@ -1,0 +1,68 @@
+﻿<fw:AcrylicWindow x:Class="FSharpPlayground.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FSharpPlayground"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        mc:Ignorable="d"
+        fw:PointerTracker.Enabled="True"
+        Title="F# Playground" Height="600" Width="1024" WindowStartupLocation="CenterScreen" Icon="/fsharp256.ico">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition MaxHeight="30"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Name="EditorGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="100" Name="EditorCol"/>
+                <ColumnDefinition Width="3" Name="EditorOutputSplitterCol"/>
+                <ColumnDefinition Width="*" MinWidth="100" Name="OutputCol"/>
+            </Grid.ColumnDefinitions>
+            <avalonEdit:TextEditor
+                Grid.Column="0"
+                Name="FSharpEditor"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                LineNumbersForeground="#FF2B91AF"
+                xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                ShowLineNumbers="True" 
+                Background="{fw:AcrylicBrush grid}" 
+                Foreground="{DynamicResource SystemBaseHighColorBrush}"
+                FontFamily="Consolas"/> <!-- 如果安装了Fira Code，则优先使用Fira Code字体。-->
+            <GridSplitter
+                Name="EditorOutputSplitter"
+                ResizeBehavior="PreviousAndNext"
+                Grid.Column="1" Width="3" 
+                Background="{DynamicResource SystemBaseLowColorBrush}"
+                Visibility="Hidden"/>
+            <avalonEdit:TextEditor
+                Grid.Column="2"
+                Name="Output"
+                Visibility="Hidden"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+                Background="{fw:AcrylicBrush grid}" 
+                Foreground="{DynamicResource SystemBaseHighColorBrush}"
+                FontFamily="Consolas"/><!-- 如果安装了Fira Code，则优先使用Fira Code字体。-->
+        </Grid>
+        <Grid
+            Grid.Row="1"
+            Background="{DynamicResource SystemBaseLowColorBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="NewDocument">New</Button>
+            <Button Grid.Column="1" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="OpenDocument">Open</Button>
+            <Button Grid.Column="2" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveDocument">Save As</Button>
+            <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent">Run (or Ctrl+Enter)</Button>
+            <Button Grid.Column="4" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="HideOrShowOutput" Name="HideOrShowOutputButton">Show Output</Button>
+        </Grid>
+    </Grid>
+</fw:AcrylicWindow>

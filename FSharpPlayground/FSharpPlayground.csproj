@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>fsharp256.ico</ApplicationIcon>
+    <StartupObject>FSharpPlayground.App</StartupObject>
+    <Authors>Seng Jik</Authors>
+    <Product>F# Playground</Product>
+    <PackageProjectUrl>https://github.com/SmallLuma/FSharpPlayground</PackageProjectUrl>
+    <PackageIcon>fsharp256.ico</PackageIcon>
+    <RepositoryUrl>https://github.com/SmallLuma/FSharpPlayground</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="fsharp256.ico" />
+    <None Include="fsharp256.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.0.1" />
+    <PackageReference Include="FluentWPF" Version="0.8.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <PackageReference Include="FSharp.Compiler.Service">
+      <Version>35.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="fsharp256.ico" />
+  </ItemGroup>
+
+</Project>

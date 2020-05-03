@@ -1,2 +1,2 @@
-# FSharpPlayground
+# F# Playground
 F# Playground
