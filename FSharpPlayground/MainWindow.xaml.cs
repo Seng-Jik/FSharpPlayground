@@ -10,6 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using FSharp.Compiler.Interactive;
+using FSharp.Compiler.SourceCodeServices;
+using System.Windows.Threading;
 
 namespace FSharpPlayground
 {
@@ -54,6 +57,11 @@ namespace FSharpPlayground
                     break;
                 }
             }
+        }
+
+        private void Run(object sender = null,RoutedEventArgs e = null)
+        {
+
         }
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
