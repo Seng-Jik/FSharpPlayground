@@ -30,6 +30,23 @@ namespace FSharpPlayground
         {
             InitializeComponent();
 
+            // 配置编辑器
+            using (var highlightxml = new StringReader(SynaxHighlight.Synax))
+                using (var r = new System.Xml.XmlTextReader(highlightxml))
+                    FSharpEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(
+                        r, ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance);
+
+            FSharpEditor.Options.ConvertTabsToSpaces = true;
+            FSharpEditor.Options.EnableEmailHyperlinks = true;
+            FSharpEditor.Options.EnableHyperlinks = true;
+            FSharpEditor.Options.EnableImeSupport = true;
+            FSharpEditor.Options.HighlightCurrentLine = true;
+
+            Output.Options.EnableEmailHyperlinks = true;
+            Output.Options.EnableHyperlinks = true;
+
+            
+
             // 读取设置
             Width = Settings.Default.WindowWidth;
             Height = Settings.Default.WindowHeight;

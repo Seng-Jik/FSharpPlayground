@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Yukimi" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="#FF579835" />
+  <Color name="Keyword" foreground="#FF4091CA" />
+  <Color name="SideEffect" foreground="#FFFEAD1D" />
+  <Color name="NumberLiteral" foreground="#FFB5CEA8" />
+  <Color name="StringLiteral" foreground="#FFD69D85" />
+  <Color name="Types" foreground="#FF86C691"/>
+	
+	<RuleSet>
+		<!-- ================ Comments ================ -->
+		<!-- Line Comment -->
+		<Span color="Comment" begin="//" />
+		
+		<!-- Block Comment -->
+		<Span color="Comment" multiline="true">
+			<Begin>\(\*</Begin>
+			<End>\*\)</End>
+		</Span>
+    
+    
+    
+    <!-- ================ Literals ================ -->
+    <!-- Digits -->
+    <Rule color="NumberLiteral">
+      \b0[xXBb][0-9a-fA-F]+  # hex number
+      |
+      (	\b\d+(\.[0-9]+)?   #number with optional floating point
+      |	\.[0-9]+           #or just starting with floating point
+      )
+      ([eE][+-]?[0-9]+)? # optional exponent
+      [uyslnLUfFIMm]?[yslLn]?
+    </Rule>
+    
+    <!-- String-->
+    <Span color="StringLiteral" multiline="true">
+      <Begin>"""</Begin>
+      <End>"""</End>
+    </Span>
+    
+    <Span color="StringLiteral">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <!-- span for escape sequences -->
+        <Span begin="\\" end="."/>
+      </RuleSet>
+    </Span>
+
+    <Span color="StringLiteral" multiline="true">
+      <Begin>@"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <!-- span for escape sequences -->
+        <Span begin='""' end=""/>
+      </RuleSet>
+    </Span>
+
+
+    
+    <!-- ================ Keywords ================ -->
+    <Keywords color="Keyword">
+      <Word>atomic</Word>
+      <Word>break</Word>
+      <Word>checked</Word>
+      <Word>component</Word>
+      <Word>const</Word>
+      <Word>constraint</Word>
+      <Word>constructor</Word>
+      <Word>continue</Word>
+      <Word>eager</Word>
+      <Word>event</Word>
+      <Word>external</Word>
+      <Word>functor</Word>
+      <Word>include</Word>
+      <Word>method</Word>
+      <Word>mixin</Word>
+      <Word>object</Word>
+      <Word>parallel</Word>
+      <Word>process</Word>
+      <Word>protected</Word>
+      <Word>pure</Word>
+      <Word>sealed</Word>
+      <Word>tailcall</Word>
+      <Word>trait</Word>
+      <Word>virtual</Word>
+      <Word>volatile</Word>
+      <Word>asr</Word>
+      <Word>land</Word>
+      <Word>lor</Word>
+      <Word>lsl</Word>
+      <Word>lsr</Word>
+      <Word>lxor</Word>
+      <Word>mod</Word>
+      <Word>sig</Word>
+      <Word>yield!</Word>
+      <Word>yield</Word>
+      <Word>with</Word>
+      <Word>while</Word>
+      <Word>when</Word>
+      <Word>void</Word>
+      <Word>val</Word>
+      <Word>use!</Word>
+      <Word>use</Word>
+      <Word>upcast</Word>
+      <Word>type</Word>
+      <Word>try</Word>
+      <Word>true</Word>
+      <Word>to</Word>
+      <Word>then</Word>
+      <Word>struct</Word>
+      <Word>static</Word>
+      <Word>select</Word>
+      <Word>return!</Word>
+      <Word>return</Word>
+      <Word>rec</Word>
+      <Word>private</Word>
+      <Word>override</Word>
+      <Word>public</Word>
+      <Word>or</Word>
+      <Word>open</Word>
+      <Word>of</Word>
+      <Word>null</Word>
+      <Word>not</Word>
+      <Word>new</Word>
+      <Word>namespace</Word>
+      <Word>module</Word>
+      <Word>member</Word>
+      <Word>match!</Word>
+      <Word>match</Word>
+      <Word>let!</Word>
+      <Word>let</Word>
+      <Word>lazy</Word>
+      <Word>internal</Word>
+      <Word>interface</Word>
+      <Word>inline</Word>
+      <Word>inherit</Word>
+      <Word>in</Word>
+      <Word>if</Word>
+      <Word>global</Word>
+      <Word>function</Word>
+      <Word>fun</Word>
+      <Word>for</Word>
+      <Word>fixed</Word>
+      <Word>finally</Word>
+      <Word>false</Word>
+      <Word>extern</Word>
+      <Word>exception</Word>
+      <Word>end</Word>
+      <Word>else</Word>
+      <Word>elif</Word>
+      <Word>downto</Word>
+      <Word>downcast</Word>
+      <Word>done</Word>
+      <Word>do</Word>
+      <Word>delegate</Word>
+      <Word>default</Word>
+      <Word>class</Word>
+      <Word>begin</Word>
+      <Word>base</Word>
+      <Word>assert</Word>
+      <Word>as</Word>
+      <Word>and</Word>
+      <Word>abstract</Word>
+      <Word>-&gt;</Word>
+    </Keywords>
+
+    <Keywords color="SideEffect">
+      <Word>&lt;-</Word>
+      <Word>mutable</Word>
+      <Word>ref</Word>
+    </Keywords>
+
+    <Keywords color="Types">
+      <Word>bool</Word>
+      <Word>byte</Word>
+      <Word>sbyte</Word>
+      <Word>int16</Word>
+      <Word>uint16</Word>
+      <Word>int</Word>
+      <Word>uint32</Word>
+      <Word>int64</Word>
+      <Word>uint64</Word>
+      <Word>nativeint</Word>
+      <Word>unativeint</Word>
+      <Word>char</Word>
+      <Word>string</Word>
+      <Word>decimal</Word>
+      <Word>unit</Word>
+      <Word>void</Word>
+      <Word>float32</Word>
+      <Word>single</Word>
+      <Word>float</Word>
+      <Word>double</Word>
+      <Word>list</Word>
+      <Word>array</Word>
+      <Word>seq</Word>
+      <Word>option</Word>
+      <Word>voption</Word>
+    </Keywords>
+		
+	</RuleSet>
+	
+</SyntaxDefinition>
