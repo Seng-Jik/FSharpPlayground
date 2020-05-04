@@ -195,6 +195,8 @@
       <Word>list</Word>
       <Word>array</Word>
       <Word>seq</Word>
+      <Word>async</Word>
+      <Word>query</Word>
       <Word>option</Word>
       <Word>voption</Word>
     </Keywords>
