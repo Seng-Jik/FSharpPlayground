@@ -10,6 +10,26 @@
         MinHeight="200"
         fw:PointerTracker.Enabled="True"
         Title="F# Playground" Height="600" Width="1024" WindowStartupLocation="CenterScreen" Icon="/fsharp256.ico">
+
+    <Window.Resources>
+        <RoutedUICommand x:Key="LineComment"/>
+        <RoutedUICommand x:Key="BlockComment" />
+        <RoutedUICommand x:Key="Run"/>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+L" Command="{StaticResource LineComment}"/>
+        <KeyBinding Gesture="Ctrl+Shift+L" Command="{StaticResource BlockComment}"/>
+        <KeyBinding Gesture="Ctrl+Enter" Command="{StaticResource Run}"/>
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource Run}" Executed="Run"/>
+        <CommandBinding Command="{StaticResource LineComment}" Executed="LineComment"/>
+        <CommandBinding Command="{StaticResource BlockComment}" Executed="BlockComment"/>
+
+    </Window.CommandBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -32,7 +52,26 @@
                 ShowLineNumbers="True" 
                 Background="{fw:AcrylicBrush grid}" 
                 Foreground="{DynamicResource SystemBaseHighColorBrush}"
-                FontFamily="Consolas"/> <!-- 如果安装了Fira Code，则优先使用Fira Code字体。-->
+                ContextMenuOpening="AcrylicContextMenu_ContextMenuOpening"
+                FontFamily="Consolas">
+                <avalonEdit:TextEditor.ContextMenu>
+                    <fw:AcrylicContextMenu>
+                        <MenuItem Header="Line Comment" InputGestureText="Ctrl+L" Command="{StaticResource LineComment}"/>
+                        <MenuItem Header="Block Comment" InputGestureText="Ctrl+Shift+L" Name="ContextMenuBlockComment" Command="{StaticResource BlockComment}"/>
+                        <MenuItem Header="Format" IsEnabled="False"/>
+                        <Separator/>
+                        <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Name="ContextMenuUndo" Click="Undo"/>
+                        <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Name="ContextMenuRedo" Click="Redo"/>
+                        <Separator/>
+                        <MenuItem Header="Cut" InputGestureText="Ctrl+X" Name="ContextMenuCut" Click="Cut"/>
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" Name="ContextMenuCopy" Click="Copy"/>
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+V" Click="Paste"/>
+                        <MenuItem Header="Delete" InputGestureText="Del" Name="ContextMenuDel" Click="Del"/>
+                        <Separator/>
+                        <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll"/>
+                    </fw:AcrylicContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
+            </avalonEdit:TextEditor>
             <GridSplitter
                 Name="EditorOutputSplitter"
                 ResizeBehavior="PreviousAndNext"
@@ -49,7 +88,13 @@
                 xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
                 Background="{fw:AcrylicBrush grid}" 
                 Foreground="{DynamicResource SystemBaseHighColorBrush}"
-                FontFamily="Consolas"/><!-- 如果安装了Fira Code，则优先使用Fira Code字体。-->
+                FontFamily="Consolas">
+                <avalonEdit:TextEditor.ContextMenu>
+                    <fw:AcrylicContextMenu>
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="CopyOutput"/>
+                    </fw:AcrylicContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
+            </avalonEdit:TextEditor>
         </Grid>
         <Grid
             Grid.Row="1"

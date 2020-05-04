@@ -259,5 +259,59 @@ namespace FSharpPlayground
                 HideOrShowOutputButton.Content = "Hide Output";
             }
         }
+
+        void CopyOutput(object sender, RoutedEventArgs e) => Output.Copy();
+
+        private void AcrylicContextMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            var multiCharacterSelected = FSharpEditor.SelectionLength > 0;
+
+            ContextMenuBlockComment.IsEnabled = multiCharacterSelected;
+
+            ContextMenuUndo.IsEnabled = FSharpEditor.CanUndo;
+            ContextMenuRedo.IsEnabled = FSharpEditor.CanRedo;
+
+            ContextMenuCut.IsEnabled =
+                ContextMenuCopy.IsEnabled =
+                ContextMenuDel.IsEnabled = multiCharacterSelected;
+        }
+
+        private void SelectAll(object sender, RoutedEventArgs e) => FSharpEditor.SelectAll();
+        private void Del(object sender, RoutedEventArgs e) => FSharpEditor.Delete();
+        private void Paste(object sender, RoutedEventArgs e) => FSharpEditor.Paste();
+        private void Copy(object sender, RoutedEventArgs e) => FSharpEditor.Copy();
+        private void Cut(object sender, RoutedEventArgs e) => FSharpEditor.Cut();
+        private void Undo(object sender, RoutedEventArgs e) => FSharpEditor.Undo();
+        private void Redo(object sender, RoutedEventArgs e) => FSharpEditor.Redo();
+
+        private void LineComment(object sender, RoutedEventArgs e)
+        {
+            var beginLine = FSharpEditor.Document.GetLineByOffset(FSharpEditor.SelectionStart);
+            var endLine = FSharpEditor.Document.GetLineByOffset(FSharpEditor.SelectionStart + FSharpEditor.SelectionLength);
+
+            var currentLine = beginLine;
+            do
+            {
+                var tail = FSharpEditor.Text.Substring(currentLine.Offset, currentLine.Length);
+                if(!tail.TrimStart().StartsWith("//"))
+                { 
+                    FSharpEditor.Document.Insert(currentLine.Offset, "// ");
+                }
+
+                currentLine = currentLine.NextLine;
+                if (currentLine == null) break;
+            } while (currentLine.LineNumber <= endLine.LineNumber);
+
+            FSharpEditor.SelectionStart = beginLine.Offset;
+            FSharpEditor.SelectionLength = endLine.EndOffset - beginLine.Offset;
+        }
+
+        private void BlockComment(object sender,RoutedEventArgs e)
+        {
+            var endPos = FSharpEditor.SelectionStart + FSharpEditor.SelectionLength;
+            FSharpEditor.Document.Insert(endPos, "*)");
+            FSharpEditor.Document.Insert(FSharpEditor.SelectionStart, "(*");
+            FSharpEditor.Select(FSharpEditor.SelectionStart - 2, FSharpEditor.SelectionLength + 4);
+        }
     }
 }
