@@ -58,7 +58,6 @@
                     <fw:AcrylicContextMenu>
                         <MenuItem Header="Line Comment" InputGestureText="Ctrl+L" Command="{StaticResource LineComment}"/>
                         <MenuItem Header="Block Comment" InputGestureText="Ctrl+Shift+L" Name="ContextMenuBlockComment" Command="{StaticResource BlockComment}"/>
-                        <MenuItem Header="Format" IsEnabled="False"/>
                         <Separator/>
                         <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Name="ContextMenuUndo" Click="Undo"/>
                         <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Name="ContextMenuRedo" Click="Redo"/>
