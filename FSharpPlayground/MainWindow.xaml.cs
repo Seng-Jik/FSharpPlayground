@@ -14,6 +14,8 @@ using FSharp.Compiler.SourceCodeServices;
 using System.Windows.Threading;
 using Microsoft.FSharp.Core;
 using System.IO;
+using System.Diagnostics;
+
 namespace FSharpPlayground
 {
     /// <summary>
@@ -28,8 +30,6 @@ namespace FSharpPlayground
         {
             InitializeComponent();
 
-            stdOut = new StringWriter(sbOut);
-
             // 读取设置
             Width = Settings.Default.WindowWidth;
             Height = Settings.Default.WindowHeight;
@@ -37,12 +37,12 @@ namespace FSharpPlayground
             FSharpEditor.Text = Settings.Default.Code;
 
             // 写入设置
-            Closed += (o, e) =>
+            Closing += (o, e) =>
             {
                 Settings.Default.WindowWidth = Width;
                 Settings.Default.WindowHeight = Height;
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown.GetValueOrDefault(Width / 2);
-                Settings.Default.Code = Settings.Default.Code;
+                Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.Save();
             };
 
@@ -61,33 +61,138 @@ namespace FSharpPlayground
             }
         }
 
-        StringBuilder sbOut = new StringBuilder();
-        StringWriter stdOut;
+        private void SetEditorEnabled(bool enabled)
+        {
+            FSharpEditor.IsEnabled = enabled;
+            NewButton.IsEnabled = enabled;
+            OpenButton.IsEnabled = enabled;
+            RunButton.IsEnabled = enabled;
+            SaveExeButton.IsEnabled = enabled;
+        }
+
+        private void SaveExe(object sender = null, RoutedEventArgs e = null)
+        {
+            using (var f = new System.Windows.Forms.SaveFileDialog()
+            {
+                Filter = "Executable File (*.exe)|*.exe"
+            })
+            {
+                f.FileOk += (s, e2) => {
+                    Output.Clear();
+                    Output.SetResourceReference(ForegroundProperty, "SystemBaseHighColorBrush");
+                    SetEditorEnabled(false);
+                    var src = FSharpEditor.Text;
+
+                    new System.Threading.Thread(() =>
+                    {
+                        CompileToExe(f.FileName, src);
+                        if(File.Exists(f.FileName))
+                        {
+                            Dispatcher.Invoke(() => Output.AppendText("Saved to " + f.FileName));
+                        }
+                        Dispatcher.Invoke(() => SetEditorEnabled(true));
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (EditorOutputSplitter.Visibility != Visibility.Visible)
+                                HideOrShowOutput();
+                        });
+                    }).Start();
+                };
+
+                f.ShowDialog();
+            }
+        }
+
         private void Run(object sender = null,RoutedEventArgs e = null)
         {
-            if (EditorOutputSplitter.Visibility != Visibility.Visible)
-                HideOrShowOutput();
             Output.Clear();
+            Output.SetResourceReference(ForegroundProperty, "SystemBaseHighColorBrush");
 
-            sbOut.Clear();
+            SetEditorEnabled(false);
+            var src = FSharpEditor.Text;
+
+            new System.Threading.Thread(() =>
+            {
+                var tempTarget = Environment.GetEnvironmentVariable("TEMP") + "/temp.exe";
+                CompileToExe(tempTarget, src);
+
+                if (File.Exists(tempTarget))
+                {
+                    using (var process = new Process())
+                    {
+                        process.StartInfo.FileName = tempTarget;
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.RedirectStandardInput = false;
+                        process.StartInfo.RedirectStandardOutput = true;
+                        process.StartInfo.RedirectStandardError = true;
+                        process.Start();
+                        process.WaitForExit();
+                        var log = process.StandardOutput.ReadToEnd();
+                        Dispatcher.Invoke(() => Output.Text = log);
+                        process.Close();
+                    }
+                }
+
+                File.Delete(tempTarget);
+                Dispatcher.Invoke(() => SetEditorEnabled(true));
+                Dispatcher.Invoke(() =>
+                {
+                    if (EditorOutputSplitter.Visibility != Visibility.Visible)
+                        HideOrShowOutput();
+                });
+            }).Start();
+        }
+
+        void CompileToExe(string outputExe,string src)
+        {
+
             var checker = FSharpChecker.Create(
-                FSharpOption<int>.None, 
+                FSharpOption<int>.None,
                 FSharpOption<bool>.None,
-                FSharpOption<bool>.None, 
-                FSharpOption<FSharp.Compiler.ReferenceResolver.Resolver>.None, 
-                FSharpOption<FSharpFunc<Tuple<string, DateTime>, FSharpOption<Tuple<object, IntPtr, int>>>>.None, 
                 FSharpOption<bool>.None,
-                FSharpOption<bool>.None, 
+                FSharpOption<FSharp.Compiler.ReferenceResolver.Resolver>.None,
+                FSharpOption<FSharpFunc<Tuple<string, DateTime>, FSharpOption<Tuple<object, IntPtr, int>>>>.None,
+                FSharpOption<bool>.None,
+                FSharpOption<bool>.None,
                 FSharpOption<bool>.None);
-            var async = checker.CompileToDynamicAssembly(
-                new string[] { "fsc.exe", "--nologo", "-O" },
-                FSharpOption<Tuple<TextWriter,TextWriter>>.Some(new Tuple<TextWriter,TextWriter>(stdOut, stdOut)),
+
+            var tempSource = Environment.GetEnvironmentVariable("TEMP") + "/temp.fs";
+
+
+            File.WriteAllText(tempSource, src);
+
+
+            var async = checker.Compile(
+                new string[] { "fsc.exe", "-a", tempSource, "--nologo", "-O", "-o", outputExe, "--target:exe", "--standalone" },
                 FSharpOption<string>.None);
 
             var result = Microsoft.FSharp.Control.FSharpAsync.RunSynchronously(
                 async,
                 FSharpOption<int>.None,
                 FSharpOption<System.Threading.CancellationToken>.None);
+
+            File.Delete(tempSource);
+
+            if (result.Item1.Length > 0)
+                Dispatcher.Invoke(() =>
+                {
+                    Output.Foreground = Brushes.Red;
+
+                    var sb = new StringBuilder();
+                    foreach (var i in result.Item1)
+                    {
+                        sb
+                            .Append('(')
+                            .Append(i.Range.StartLine)
+                            .Append(") ")
+                            .Append("error FS")
+                            .Append(string.Format("{0:D4}", i.ErrorNumber))
+                            .Append(':')
+                            .AppendLine(i.Message);
+                    }
+                    Output.Text = sb.ToString();
+                });
         }
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
@@ -122,7 +227,7 @@ namespace FSharpPlayground
             {
                 f.FileOk += (s, e2) => {
                     if (!e2.Cancel)
-                        System.IO.File.WriteAllText(f.FileName, FSharpEditor.Text);
+                        File.WriteAllText(f.FileName, FSharpEditor.Text);
                 };
 
                 f.ShowDialog();

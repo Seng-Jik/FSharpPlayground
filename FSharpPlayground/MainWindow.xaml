@@ -40,6 +40,7 @@
                 Background="{DynamicResource SystemBaseLowColorBrush}"
                 Visibility="Hidden"/>
             <avalonEdit:TextEditor
+                IsReadOnly="True"
                 Grid.Column="2"
                 Name="Output"
                 Visibility="Hidden"
@@ -59,12 +60,14 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="NewDocument">New</Button>
-            <Button Grid.Column="1" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="OpenDocument">Open</Button>
+            <Button Grid.Column="0" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="NewDocument" Name="NewButton">New</Button>
+            <Button Grid.Column="1" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="OpenDocument" Name="OpenButton">Open</Button>
             <Button Grid.Column="2" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveDocument">Save As</Button>
-            <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="Run">Run (or Ctrl+Enter)</Button>
+            <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="Run" Name="RunButton">Run (or Ctrl+Enter)</Button>
             <Button Grid.Column="4" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="HideOrShowOutput" Name="HideOrShowOutputButton">Show Output</Button>
+            <Button Grid.Column="5" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveExe" Name="SaveExeButton">Save Executable</Button>
         </Grid>
     </Grid>
 </fw:AcrylicWindow>
