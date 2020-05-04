@@ -10,10 +10,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using FSharp.Compiler.Interactive;
 using FSharp.Compiler.SourceCodeServices;
 using System.Windows.Threading;
-
+using Microsoft.FSharp.Core;
+using System.IO;
 namespace FSharpPlayground
 {
     /// <summary>
@@ -27,6 +27,8 @@ namespace FSharpPlayground
         public MainWindow()
         {
             InitializeComponent();
+
+            stdOut = new StringWriter(sbOut);
 
             // 读取设置
             Width = Settings.Default.WindowWidth;
@@ -59,9 +61,33 @@ namespace FSharpPlayground
             }
         }
 
+        StringBuilder sbOut = new StringBuilder();
+        StringWriter stdOut;
         private void Run(object sender = null,RoutedEventArgs e = null)
         {
+            if (EditorOutputSplitter.Visibility != Visibility.Visible)
+                HideOrShowOutput();
+            Output.Clear();
 
+            sbOut.Clear();
+            var checker = FSharpChecker.Create(
+                FSharpOption<int>.None, 
+                FSharpOption<bool>.None,
+                FSharpOption<bool>.None, 
+                FSharpOption<FSharp.Compiler.ReferenceResolver.Resolver>.None, 
+                FSharpOption<FSharpFunc<Tuple<string, DateTime>, FSharpOption<Tuple<object, IntPtr, int>>>>.None, 
+                FSharpOption<bool>.None,
+                FSharpOption<bool>.None, 
+                FSharpOption<bool>.None);
+            var async = checker.CompileToDynamicAssembly(
+                new string[] { "fsc.exe", "--nologo", "-O" },
+                FSharpOption<Tuple<TextWriter,TextWriter>>.Some(new Tuple<TextWriter,TextWriter>(stdOut, stdOut)),
+                FSharpOption<string>.None);
+
+            var result = Microsoft.FSharp.Control.FSharpAsync.RunSynchronously(
+                async,
+                FSharpOption<int>.None,
+                FSharpOption<System.Threading.CancellationToken>.None);
         }
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
