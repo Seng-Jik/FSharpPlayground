@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:FSharpPlayground"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         mc:Ignorable="d"
+        MinWidth="710"
+        MinHeight="200"
         fw:PointerTracker.Enabled="True"
         Title="F# Playground" Height="600" Width="1024" WindowStartupLocation="CenterScreen" Icon="/fsharp256.ico">
     <Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,36 @@ namespace FSharpPlayground
         public MainWindow()
         {
             InitializeComponent();
-            EditorCol.Width = new GridLength(1024);
+
+            // 读取设置
+            Width = Settings.Default.WindowWidth;
+            Height = Settings.Default.WindowHeight;
+            editorWidthWhenOutputShown = Settings.Default.EditorWidth;
+            FSharpEditor.Text = Settings.Default.Code;
+
+            // 写入设置
+            Closed += (o, e) =>
+            {
+                Settings.Default.WindowWidth = Width;
+                Settings.Default.WindowHeight = Height;
+                Settings.Default.EditorWidth = editorWidthWhenOutputShown.GetValueOrDefault(Width / 2);
+                Settings.Default.Code = Settings.Default.Code;
+                Settings.Default.Save();
+            };
+
+            EditorCol.Width = new GridLength(Width);
+
+            // 寻找Fira Code字体
+            InstalledFontCollection fonts = new InstalledFontCollection();
+            foreach (var family in fonts.Families)
+            {
+                if(family.Name.StartsWith("Fira Code"))
+                {
+                    FSharpEditor.FontFamily = new FontFamily(family.Name);
+                    Output.FontFamily = new FontFamily(family.Name);
+                    break;
+                }
+            }
         }
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
@@ -78,7 +108,13 @@ namespace FSharpPlayground
             }
             else
             {
-                EditorCol.Width = new GridLength(editorWidthWhenOutputShown.GetValueOrDefault(EditorGrid.ActualWidth / 2));
+                var w = editorWidthWhenOutputShown.GetValueOrDefault(EditorGrid.ActualWidth / 2);
+                EditorCol.Width = new GridLength(w);
+                if (w >= Width * 0.9)
+                {
+                    EditorCol.Width = new GridLength(Width / 2);
+                    editorWidthWhenOutputShown = Width / 2;
+                }
                 EditorOutputSplitter.Visibility = Visibility.Visible;
                 Output.Visibility = Visibility.Visible;
                 HideOrShowOutputButton.Content = "Hide Output";
