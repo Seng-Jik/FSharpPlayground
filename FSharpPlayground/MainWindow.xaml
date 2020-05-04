@@ -9,6 +9,7 @@
         MinWidth="710"
         MinHeight="200"
         fw:PointerTracker.Enabled="True"
+        TintOpacity="0.8"
         Title="F# Playground" Height="600" Width="1024" WindowStartupLocation="CenterScreen" Icon="/fsharp256.ico">
 
     <Window.Resources>
