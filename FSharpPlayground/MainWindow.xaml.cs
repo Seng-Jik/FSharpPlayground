@@ -143,6 +143,7 @@ namespace FSharpPlayground
             if (EditorOutputSplitter.Visibility != Visibility.Visible)
                 HideOrShowOutput();
 
+            var orgRunButtoncontent = RunButton.Content;
 
             new System.Threading.Thread(() =>
             {
@@ -161,6 +162,16 @@ namespace FSharpPlayground
                         process.StartInfo.RedirectStandardOutput = true;
                         process.StartInfo.RedirectStandardError = true;
                         process.Start();
+
+                        // 设置“Run”按钮为“Kill”
+                        Dispatcher.Invoke(() =>
+                        {
+                            RunButton.Click -= Run;
+                            RunButton.Click += KillTempExe;
+                            RunButton.Content = "Kill";
+                            RunButton.IsEnabled = true;
+                        });
+
                         while (!process.HasExited)
                         {
                             var log = process.StandardOutput.ReadLine();
@@ -169,6 +180,15 @@ namespace FSharpPlayground
                                 Output.AppendText(Environment.NewLine);
                             });
                         }
+
+                        // 恢复“Run”按钮
+                        Dispatcher.Invoke(() =>
+                        {
+                            RunButton.Click -= KillTempExe;
+                            RunButton.Click += Run;
+                            RunButton.Content = orgRunButtoncontent;
+                        });
+
                         process.WaitForExit();
                         var logRemainder = process.StandardOutput.ReadToEnd();
                         Dispatcher.Invoke(() => Output.AppendText(logRemainder));
@@ -181,7 +201,7 @@ namespace FSharpPlayground
             }).Start();
         }
 
-        static void KillTempExe()
+        static void KillTempExe(object sender = null,RoutedEventArgs e = null)
         {
             using (var process = new Process())
             {
