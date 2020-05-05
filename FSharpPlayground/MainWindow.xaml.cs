@@ -364,5 +364,21 @@ namespace FSharpPlayground
             FSharpEditor.Document.Insert(FSharpEditor.SelectionStart, "(*");
             FSharpEditor.Select(FSharpEditor.SelectionStart - 2, FSharpEditor.SelectionLength + 4);
         }
+
+        private void SaveOutputAs(object sender,RoutedEventArgs e)
+        {
+            using (var f = new System.Windows.Forms.SaveFileDialog()
+            {
+                Filter = "All Files (*.*) | *.*"
+            })
+            {
+                f.FileOk += (s, e2) => {
+                    if (!e2.Cancel)
+                        File.WriteAllText(f.FileName, Output.Text);
+                };
+
+                f.ShowDialog();
+            }
+        }
     }
 }
