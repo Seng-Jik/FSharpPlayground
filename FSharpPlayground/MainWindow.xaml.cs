@@ -87,6 +87,7 @@ namespace FSharpPlayground
             }
         }
 
+        bool storyEditorEnabled = true;
         private void SetEditorEnabled(bool enabled)
         {
             FSharpEditor.IsEnabled = enabled;
@@ -94,6 +95,7 @@ namespace FSharpPlayground
             OpenButton.IsEnabled = enabled;
             RunButton.IsEnabled = enabled;
             SaveExeButton.IsEnabled = enabled;
+            storyEditorEnabled = enabled;
         }
 
         private void SaveExe(object sender = null, RoutedEventArgs e = null)
@@ -131,6 +133,7 @@ namespace FSharpPlayground
 
         private void Run(object sender = null,RoutedEventArgs e = null)
         {
+            if (!storyEditorEnabled) return;
             Output.Clear();
             Output.SetResourceReference(ForegroundProperty, "SystemBaseHighColorBrush");
 
@@ -332,6 +335,7 @@ namespace FSharpPlayground
 
         private void LineComment(object sender, RoutedEventArgs e)
         {
+            if (!storyEditorEnabled) return;
             var beginLine = FSharpEditor.Document.GetLineByOffset(FSharpEditor.SelectionStart);
             var endLine = FSharpEditor.Document.GetLineByOffset(FSharpEditor.SelectionStart + FSharpEditor.SelectionLength);
 
@@ -354,6 +358,7 @@ namespace FSharpPlayground
 
         private void BlockComment(object sender,RoutedEventArgs e)
         {
+            if (!storyEditorEnabled) return;
             var endPos = FSharpEditor.SelectionStart + FSharpEditor.SelectionLength;
             FSharpEditor.Document.Insert(endPos, "*)");
             FSharpEditor.Document.Insert(FSharpEditor.SelectionStart, "(*");
