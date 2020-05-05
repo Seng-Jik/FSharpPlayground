@@ -278,6 +278,7 @@ namespace FSharpPlayground
         }
 
         void CopyOutput(object sender, RoutedEventArgs e) => Output.Copy();
+        void SelectAllOutput(object sender, RoutedEventArgs e) => Output.SelectAll();
 
         private void AcrylicContextMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
