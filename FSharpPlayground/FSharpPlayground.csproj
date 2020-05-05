@@ -18,7 +18,11 @@
 
   <ItemGroup>
     <None Remove="fsharp256.ico" />
+    <None Remove="Resources\DarkThemeColors.txt" />
+    <None Remove="Resources\LightThemeColors.txt" />
     <None Remove="Resources\Synax.xml" />
+    <EmbeddedResource Include="Resources\DarkThemeColors.txt" />
+    <EmbeddedResource Include="Resources\LightThemeColors.txt" />
     <EmbeddedResource Include="Resources\Synax.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

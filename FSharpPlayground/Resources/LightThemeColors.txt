@@ -1,0 +1,9 @@
+﻿<Color name="Comment" foreground="#FF579835" />
+<Color name="Keyword" foreground="#FF0000FF" />
+<Color name="SideEffect" foreground="#FFA08000" />
+<Color name="NumberLiteral" foreground="#FF000060" />
+<Color name="StringLiteral" foreground="#FFA31515" />
+<Color name="StringFormat" foreground="#FF2B91AF"/>
+<Color name="Types" foreground="#FF2B91AF"/>
+<Color name="Parttens" foreground="#FF4EC9B0"/>
+<Color name="Preprocessor" foreground="#FF9B9B9B"/>

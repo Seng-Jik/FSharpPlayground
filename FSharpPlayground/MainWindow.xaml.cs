@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using Microsoft.FSharp.Core;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FSharpPlayground
 {
@@ -31,10 +32,14 @@ namespace FSharpPlayground
             InitializeComponent();
 
             // 配置编辑器
-            using (var highlightxml = new StringReader(SynaxHighlight.Synax))
-                using (var r = new System.Xml.XmlTextReader(highlightxml))
-                    FSharpEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(
-                        r, ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance);
+            using (var highlightxml = new StringReader(
+                SynaxHighlight.Synax.Replace(
+                    "<!-- __COLORS__ -->",
+                    SourceChord.FluentWPF.SystemTheme.AppTheme == SourceChord.FluentWPF.ApplicationTheme.Dark ?
+                        SynaxHighlight.DarkThemeColors : SynaxHighlight.LightThemeColors)))
+            using (var r = new System.Xml.XmlTextReader(highlightxml))
+                FSharpEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(
+                    r, ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance);
 
             FSharpEditor.Options.ConvertTabsToSpaces = true;
             FSharpEditor.Options.EnableEmailHyperlinks = true;
@@ -61,6 +66,7 @@ namespace FSharpPlayground
             // 写入设置
             Closing += (o, e) =>
             {
+                KillTempExe();
                 Settings.Default.WindowWidth = Width;
                 Settings.Default.WindowHeight = Height;
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
@@ -131,9 +137,14 @@ namespace FSharpPlayground
             SetEditorEnabled(false);
             var src = FSharpEditor.Text;
 
+            if (EditorOutputSplitter.Visibility != Visibility.Visible)
+                HideOrShowOutput();
+
+
             new System.Threading.Thread(() =>
             {
                 var tempTarget = Environment.GetEnvironmentVariable("TEMP") + "/temp.exe";
+                KillTempExe();
                 CompileToExe(tempTarget, src);
 
                 if (File.Exists(tempTarget))
@@ -147,21 +158,38 @@ namespace FSharpPlayground
                         process.StartInfo.RedirectStandardOutput = true;
                         process.StartInfo.RedirectStandardError = true;
                         process.Start();
+                        while (!process.HasExited)
+                        {
+                            var log = process.StandardOutput.ReadLine();
+                            Dispatcher.Invoke(() => {
+                                Output.AppendText(log);
+                                Output.AppendText(Environment.NewLine);
+                            });
+                        }
                         process.WaitForExit();
-                        var log = process.StandardOutput.ReadToEnd();
-                        Dispatcher.Invoke(() => Output.Text = log);
+                        var logRemainder = process.StandardOutput.ReadToEnd();
+                        Dispatcher.Invoke(() => Output.AppendText(logRemainder));
                         process.Close();
                     }
                 }
 
                 File.Delete(tempTarget);
                 Dispatcher.Invoke(() => SetEditorEnabled(true));
-                Dispatcher.Invoke(() =>
-                {
-                    if (EditorOutputSplitter.Visibility != Visibility.Visible)
-                        HideOrShowOutput();
-                });
             }).Start();
+        }
+
+        static void KillTempExe()
+        {
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = "taskkill.exe";
+                process.StartInfo.Arguments = "-f -im temp.exe";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+                process.WaitForExit();
+                process.Close();
+            }
         }
 
         void CompileToExe(string outputExe,string src)

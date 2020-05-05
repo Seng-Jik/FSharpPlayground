@@ -1,14 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Yukimi" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-  <Color name="Comment" foreground="#FF579835" />
-  <Color name="Keyword" foreground="#FF4091CA" />
-  <Color name="SideEffect" foreground="#FFFEAD1D" />
-  <Color name="NumberLiteral" foreground="#FFB5CEA8" />
-  <Color name="StringLiteral" foreground="#FFD69D85" />
-  <Color name="StringFormat" foreground="#FF4EDCB0"/>
-  <Color name="Types" foreground="#FF4EC9B0"/>
-  <Color name="Parttens" foreground="#FFB8D7A3"/>
-  <Color name="Preprocessor" foreground="#FF9B9B9B"/>
+
+  <!-- __COLORS__ -->
 	
 	<RuleSet>
     <!-- Preprocessor -->

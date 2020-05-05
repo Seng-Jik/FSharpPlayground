@@ -61,7 +61,64 @@ namespace FSharpPlayground {
         }
         
         /// <summary>
-        ///   查找类似  的本地化字符串。
+        ///   查找类似 &lt;Color name=&quot;Comment&quot; foreground=&quot;#FF579835&quot; /&gt;
+        ///&lt;Color name=&quot;Keyword&quot; foreground=&quot;#FF4091CA&quot; /&gt;
+        ///&lt;Color name=&quot;SideEffect&quot; foreground=&quot;#FFFEAD1D&quot; /&gt;
+        ///&lt;Color name=&quot;NumberLiteral&quot; foreground=&quot;#FFB5CEA8&quot; /&gt;
+        ///&lt;Color name=&quot;StringLiteral&quot; foreground=&quot;#FFD69D85&quot; /&gt;
+        ///&lt;Color name=&quot;StringFormat&quot; foreground=&quot;#FF4EDCB0&quot;/&gt;
+        ///&lt;Color name=&quot;Types&quot; foreground=&quot;#FF4EC9B0&quot;/&gt;
+        ///&lt;Color name=&quot;Parttens&quot; foreground=&quot;#FFB8D7A3&quot;/&gt;
+        ///&lt;Color name=&quot;Preprocessor&quot; foreground=&quot;#FF9B9B9B&quot;/&gt;
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string DarkThemeColors {
+            get {
+                return ResourceManager.GetString("DarkThemeColors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 &lt;Color name=&quot;Comment&quot; foreground=&quot;#FF579835&quot; /&gt;
+        ///&lt;Color name=&quot;Keyword&quot; foreground=&quot;#FF4091CA&quot; /&gt;
+        ///&lt;Color name=&quot;SideEffect&quot; foreground=&quot;#FFFEAD1D&quot; /&gt;
+        ///&lt;Color name=&quot;NumberLiteral&quot; foreground=&quot;#FFB5CEA8&quot; /&gt;
+        ///&lt;Color name=&quot;StringLiteral&quot; foreground=&quot;#FFD69D85&quot; /&gt;
+        ///&lt;Color name=&quot;StringFormat&quot; foreground=&quot;#FF4EDCB0&quot;/&gt;
+        ///&lt;Color name=&quot;Types&quot; foreground=&quot;#FF4EC9B0&quot;/&gt;
+        ///&lt;Color name=&quot;Parttens&quot; foreground=&quot;#FFB8D7A3&quot;/&gt;
+        ///&lt;Color name=&quot;Preprocessor&quot; foreground=&quot;#FF9B9B9B&quot;/&gt;
+        /// 的本地化字符串。
+        /// </summary>
+        internal static string LightThemeColors {
+            get {
+                return ResourceManager.GetString("LightThemeColors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 &lt;?xml version=&quot;1.0&quot;?&gt;
+        ///&lt;SyntaxDefinition name=&quot;Yukimi&quot; xmlns=&quot;http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008&quot;&gt;
+        ///
+        ///  &lt;!-- Colors --&gt;
+        ///	
+        ///	&lt;RuleSet&gt;
+        ///    &lt;!-- Preprocessor --&gt;
+        ///    &lt;Span color=&quot;Preprocessor&quot; begin=&quot;#&quot;/&gt;
+        ///    
+        ///		&lt;!-- ================ Comments ================ --&gt;
+        ///		&lt;!-- Line Comment --&gt;
+        ///		&lt;Span color=&quot;Comment&quot; begin=&quot;//&quot; /&gt;
+        ///		
+        ///		&lt;!-- Block Comment --&gt;
+        ///		&lt;Span color=&quot;Comment&quot; multiline=&quot;true&quot;&gt;
+        ///			&lt;Begin&gt;\(\*&lt;/Begin&gt;
+        ///			&lt;End&gt;\*\)&lt;/End&gt;
+        ///		&lt;/Span&gt;
+        ///    
+        ///    
+        ///    
+        ///    &lt;!-- == [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string Synax {
             get {
