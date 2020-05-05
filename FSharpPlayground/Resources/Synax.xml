@@ -8,9 +8,12 @@
   <Color name="StringFormat" foreground="#FF4EDCB0"/>
   <Color name="Types" foreground="#FF4EC9B0"/>
   <Color name="Parttens" foreground="#FFB8D7A3"/>
-
+  <Color name="Preprocessor" foreground="#FF9B9B9B"/>
 	
 	<RuleSet>
+    <!-- Preprocessor -->
+    <Span color="Preprocessor" begin="#"/>
+    
 		<!-- ================ Comments ================ -->
 		<!-- Line Comment -->
 		<Span color="Comment" begin="//" />
@@ -50,7 +53,7 @@
         
         <!-- String Format -->
         <Rule color="StringFormat">
-          %[0-9]*[AaDdFfCcSs]
+          %[0-9]*[AaDdFfCcSsBb]
         </Rule>
       </RuleSet>
     </Span>
@@ -234,6 +237,11 @@
       <Word>String</Word>
       <Word>Expr</Word>
     </Keywords>
+    
+    <!-- Generic Types -->
+    <Rule color="Types">
+      ('|\^)[A-Za-z][A-Za-z0-1_]*
+    </Rule>
     
     <!-- Parttens -->
     <Keywords color="Parttens">
