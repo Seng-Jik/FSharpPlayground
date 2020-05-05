@@ -51,6 +51,13 @@ namespace FSharpPlayground
             editorWidthWhenOutputShown = Settings.Default.EditorWidth;
             FSharpEditor.Text = Settings.Default.Code;
 
+            if (Environment.GetCommandLineArgs().Length == 2)
+            {
+                var file = Environment.GetCommandLineArgs()[1];
+                if (File.Exists(file))
+                    FSharpEditor.Text = File.ReadAllText(file);
+            }
+
             // 写入设置
             Closing += (o, e) =>
             {
