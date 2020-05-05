@@ -6,7 +6,7 @@
   <Color name="NumberLiteral" foreground="#FFB5CEA8" />
   <Color name="StringLiteral" foreground="#FFD69D85" />
   <Color name="StringFormat" foreground="#FF4EDCB0"/>
-  <Color name="Types" foreground="#FF86C691"/>
+  <Color name="Types" foreground="#FF4EC9B0"/>
 
 	
 	<RuleSet>
@@ -63,7 +63,13 @@
       </RuleSet>
     </Span>
 
-
+    
+    <!-- Declaration -->
+    <!-- Attributes-->
+    <Span color="Types" multiline="true">
+      <Begin>\[&lt;</Begin>
+      <End>&gt;\]</End>
+    </Span>
     
     <!-- ================ Keywords ================ -->
     <Keywords color="Keyword">
@@ -179,6 +185,7 @@
     </Keywords>
 
     <Keywords color="Types">
+      <!-- Basic Types -->
       <Word>bool</Word>
       <Word>byte</Word>
       <Word>sbyte</Word>
@@ -206,6 +213,25 @@
       <Word>query</Word>
       <Word>option</Word>
       <Word>voption</Word>
+
+      <!-- Modules -->
+      <Word>Array</Word>
+      <Word>Array.Parallel</Word>
+      <Word>Array2D</Word>
+      <Word>Array3D</Word>
+      <Word>Array4D</Word>
+      <Word>List</Word>
+      <Word>Option</Word>
+      <Word>Result</Word>
+      <Word>Seq</Word>
+      <Word>Async</Word>
+      <Word>Map</Word>
+      <Word>Set</Word>
+      <Word>Event</Word>
+      <Word>Lazy</Word>
+      <Word>Printf</Word>
+      <Word>String</Word>
+      <Word>Expr</Word>
     </Keywords>
 		
 	</RuleSet>
