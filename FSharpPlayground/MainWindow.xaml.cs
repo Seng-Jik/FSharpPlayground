@@ -107,7 +107,6 @@ namespace FSharpPlayground
             {
                 f.FileOk += (s, e2) => {
                     Output.Clear();
-                    Output.SetResourceReference(ForegroundProperty, "SystemBaseHighColorBrush");
                     SetEditorEnabled(false);
                     var src = FSharpEditor.Text;
 
@@ -135,7 +134,6 @@ namespace FSharpPlayground
         {
             if (!storyEditorEnabled) return;
             Output.Clear();
-            Output.SetResourceReference(ForegroundProperty, "SystemBaseHighColorBrush");
 
             SetEditorEnabled(false);
             var src = FSharpEditor.Text;
@@ -249,8 +247,6 @@ namespace FSharpPlayground
             if (result.Item1.Length > 0)
                 Dispatcher.Invoke(() =>
                 {
-                    Output.Foreground = Brushes.Red;
-
                     var sb = new StringBuilder();
                     foreach (var i in result.Item1)
                     {
@@ -258,7 +254,7 @@ namespace FSharpPlayground
                             .Append('(')
                             .Append(i.Range.StartLine)
                             .Append(") ")
-                            .Append("error FS")
+                            .Append("FS")
                             .Append(string.Format("{0:D4}", i.ErrorNumber))
                             .Append(':')
                             .AppendLine(i.Message);
