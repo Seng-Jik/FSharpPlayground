@@ -11,6 +11,9 @@
     <PackageProjectUrl>https://github.com/SmallLuma/FSharpPlayground</PackageProjectUrl>
     <PackageIcon>fsharp256.ico</PackageIcon>
     <RepositoryUrl>https://github.com/SmallLuma/FSharpPlayground</RepositoryUrl>
+    <Description>https://github.com/SmallLuma/FSharpPlayground</Description>
+    <PackageReleaseNotes>https://github.com/SmallLuma/FSharpPlayground</PackageReleaseNotes>
+    <Copyright>https://github.com/SmallLuma/FSharpPlayground</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
