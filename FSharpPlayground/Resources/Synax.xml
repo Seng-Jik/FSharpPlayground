@@ -5,7 +5,9 @@
   <Color name="SideEffect" foreground="#FFFEAD1D" />
   <Color name="NumberLiteral" foreground="#FFB5CEA8" />
   <Color name="StringLiteral" foreground="#FFD69D85" />
+  <Color name="StringFormat" foreground="#FF4EDCB0"/>
   <Color name="Types" foreground="#FF86C691"/>
+
 	
 	<RuleSet>
 		<!-- ================ Comments ================ -->
@@ -44,6 +46,11 @@
       <RuleSet>
         <!-- span for escape sequences -->
         <Span begin="\\" end="."/>
+        
+        <!-- String Format -->
+        <Rule color="StringFormat">
+          %[0-9]*[AaDdFfCcSs]
+        </Rule>
       </RuleSet>
     </Span>
 
