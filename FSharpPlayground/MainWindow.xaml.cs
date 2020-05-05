@@ -175,10 +175,11 @@ namespace FSharpPlayground
                         while (!process.HasExited)
                         {
                             var log = process.StandardOutput.ReadLine();
-                            Dispatcher.Invoke(() => {
-                                Output.AppendText(log);
-                                Output.AppendText(Environment.NewLine);
-                            });
+                            if(log != null)
+                                Dispatcher.Invoke(() => {
+                                    Output.AppendText(log);
+                                    Output.AppendText(Environment.NewLine);
+                                });
                         }
 
                         // 恢复“Run”按钮
