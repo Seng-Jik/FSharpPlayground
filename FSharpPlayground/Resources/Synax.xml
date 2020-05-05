@@ -7,6 +7,7 @@
   <Color name="StringLiteral" foreground="#FFD69D85" />
   <Color name="StringFormat" foreground="#FF4EDCB0"/>
   <Color name="Types" foreground="#FF4EC9B0"/>
+  <Color name="Parttens" foreground="#FFB8D7A3"/>
 
 	
 	<RuleSet>
@@ -232,6 +233,16 @@
       <Word>Printf</Word>
       <Word>String</Word>
       <Word>Expr</Word>
+    </Keywords>
+    
+    <!-- Parttens -->
+    <Keywords color="Parttens">
+      <Word>Some</Word>
+      <Word>None</Word>
+      <Word>ValueSome</Word>
+      <Word>ValueNone</Word>
+      <Word>Ok</Word>
+      <Word>Error</Word>
     </Keywords>
 		
 	</RuleSet>

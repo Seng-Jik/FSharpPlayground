@@ -43,9 +43,7 @@ namespace FSharpPlayground
             FSharpEditor.Options.HighlightCurrentLine = true;
 
             Output.Options.EnableEmailHyperlinks = true;
-            Output.Options.EnableHyperlinks = true;
-
-            
+            Output.Options.EnableHyperlinks = true;            
 
             // 读取设置
             Width = Settings.Default.WindowWidth;
@@ -58,12 +56,10 @@ namespace FSharpPlayground
             {
                 Settings.Default.WindowWidth = Width;
                 Settings.Default.WindowHeight = Height;
-                Settings.Default.EditorWidth = editorWidthWhenOutputShown.GetValueOrDefault(Width / 2);
+                Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.Save();
             };
-
-            EditorCol.Width = new GridLength(Width);
 
             // 寻找Fira Code字体
             InstalledFontCollection fonts = new InstalledFontCollection();
@@ -251,26 +247,23 @@ namespace FSharpPlayground
             }
         }
 
-        private double? editorWidthWhenOutputShown;
+        private double editorWidthWhenOutputShown;
         private void HideOrShowOutput(object sender = null, RoutedEventArgs e = null)
         {
             if(EditorOutputSplitter.Visibility == Visibility.Visible)
             {
-                editorWidthWhenOutputShown = EditorCol.ActualWidth;
-                EditorCol.Width = new GridLength(EditorGrid.ActualWidth);
+                editorWidthWhenOutputShown = OutputCol.ActualWidth;
+                OutputCol.Width = new GridLength(0);
+                EditorOutputSplitterCol.Width = new GridLength(0);
                 EditorOutputSplitter.Visibility = Visibility.Collapsed;
                 Output.Visibility = Visibility.Collapsed;
                 HideOrShowOutputButton.Content = "Show Output";
             }
             else
             {
-                var w = editorWidthWhenOutputShown.GetValueOrDefault(EditorGrid.ActualWidth / 2);
-                EditorCol.Width = new GridLength(w);
-                if (w >= Width * 0.9)
-                {
-                    EditorCol.Width = new GridLength(Width / 2);
-                    editorWidthWhenOutputShown = Width / 2;
-                }
+                var w = editorWidthWhenOutputShown;
+                EditorOutputSplitterCol.Width = new GridLength(3);
+                OutputCol.Width = new GridLength(w);
                 EditorOutputSplitter.Visibility = Visibility.Visible;
                 Output.Visibility = Visibility.Visible;
                 HideOrShowOutputButton.Content = "Hide Output";

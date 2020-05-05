@@ -37,11 +37,11 @@
             <RowDefinition MaxHeight="30"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Name="EditorGrid">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="100" Name="EditorCol"/>
-                <ColumnDefinition Width="3" Name="EditorOutputSplitterCol"/>
-                <ColumnDefinition Width="*" MinWidth="100" Name="OutputCol"/>
+                <ColumnDefinition Width="*" MinWidth="100"/>
+                <ColumnDefinition Width="0" Name="EditorOutputSplitterCol"/>
+                <ColumnDefinition Width="0" Name="OutputCol"/>
             </Grid.ColumnDefinitions>
             <avalonEdit:TextEditor
                 Grid.Column="0"
