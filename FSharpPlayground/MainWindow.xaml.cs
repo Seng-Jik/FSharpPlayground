@@ -197,7 +197,12 @@ namespace FSharpPlayground
 
                         process.WaitForExit();
                         var logRemainder = process.StandardOutput.ReadToEnd();
-                        Dispatcher.Invoke(() => Output.AppendText(logRemainder));
+                        var err = process.StandardError.ReadToEnd();
+                        Dispatcher.Invoke(() => {
+                            Output.AppendText(logRemainder);
+                            Output.AppendText(Environment.NewLine);
+                            Output.AppendText(err);
+                        });
                         process.Close();
                     }
                 }
