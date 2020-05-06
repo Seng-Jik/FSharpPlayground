@@ -72,7 +72,11 @@ namespace FSharpPlayground
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.Save();
+
+                File.Delete("temp.exe");
             };
+
+            File.Delete("temp.exe");
 
             // 寻找Fira Code字体
             InstalledFontCollection fonts = new InstalledFontCollection();
