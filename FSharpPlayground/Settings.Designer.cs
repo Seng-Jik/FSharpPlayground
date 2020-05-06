@@ -73,18 +73,6 @@ namespace FSharpPlayground {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UsingDotNetFramework {
-            get {
-                return ((bool)(this["UsingDotNetFramework"]));
-            }
-            set {
-                this["UsingDotNetFramework"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool RunInNewConsole {
             get {

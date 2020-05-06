@@ -74,7 +74,6 @@
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll"/>
                         <Separator/>
                         <MenuItem Header="Run in a new console window" IsCheckable="True" Name="SetRunInNewConsole" />
-                        <MenuItem Header="Using .NET Framework" IsCheckable="True" />
                         <MenuItem Header="Referenced DLLs..."/>
                         <MenuItem Header="Referenced F# Code..."/>
 

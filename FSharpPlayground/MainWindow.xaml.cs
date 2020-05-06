@@ -263,29 +263,25 @@ namespace FSharpPlayground
 
             File.WriteAllText(tempSource, src);
 
+            var args = new List<string>
+            {
+                "fsc.exe",
+                tempSource,
+                "--nologo",
+                "--crossoptimize" + (optimize ? "+" : "-"),
+                "--optimize" + (optimize ? "+" : "-"),
+                "-o", outputExe,
+                "--target:"+target,
+                "--noframework"
+            };
 
-            var args = 
-                optimize ? (new string[] {  //优化
-                    "fsc.exe",
-                    tempSource,
-                    "--nologo",
-                    "--crossoptimize+",
-                    "--optimize+",
-                    "-o", outputExe,
-                    "--target:"+target,
-                    "--standalone"
-                }) : (new string[] {    // 不优化
-                    "fsc.exe",
-                    tempSource,
-                    "--nologo",
-                    "--crossoptimize-",
-                    "--optimize-",
-                    "-o", outputExe,
-                    "--target:"+target,
-                });
+            if (optimize)
+            {
+                args.Add("--standalone");
+            }
 
             var async = checker.Compile(
-                args,
+                args.ToArray(),
                 FSharpOption<string>.None);
 
             var result = Microsoft.FSharp.Control.FSharpAsync.RunSynchronously(
