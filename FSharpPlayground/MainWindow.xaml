@@ -60,6 +60,8 @@
                         <MenuItem Header="Line Comment" InputGestureText="Ctrl+L" Command="{StaticResource LineComment}"/>
                         <MenuItem Header="Block Comment" InputGestureText="Ctrl+Shift+L" Name="ContextMenuBlockComment" Command="{StaticResource BlockComment}"/>
                         <Separator/>
+                        <MenuItem Header="Save Binary File" Click="SaveExe"/>
+                        <Separator/>
                         <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Name="ContextMenuUndo" Click="Undo"/>
                         <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Name="ContextMenuRedo" Click="Redo"/>
                         <Separator/>
@@ -107,14 +109,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="NewDocument" Name="NewButton">New</Button>
             <Button Grid.Column="1" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="OpenDocument" Name="OpenButton">Open</Button>
             <Button Grid.Column="2" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveDocument">Save As</Button>
             <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="Run" Name="RunButton">Run (or Ctrl+Enter)</Button>
             <Button Grid.Column="4" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="HideOrShowOutput" Name="HideOrShowOutputButton">Show Output</Button>
-            <Button Grid.Column="5" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveExe" Name="SaveExeButton">Save Executable</Button>
         </Grid>
     </Grid>
 </fw:AcrylicWindow>

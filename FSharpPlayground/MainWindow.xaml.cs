@@ -94,7 +94,6 @@ namespace FSharpPlayground
             NewButton.IsEnabled = enabled;
             OpenButton.IsEnabled = enabled;
             RunButton.IsEnabled = enabled;
-            SaveExeButton.IsEnabled = enabled;
             storyEditorEnabled = enabled;
         }
 
@@ -102,7 +101,7 @@ namespace FSharpPlayground
         {
             using (var f = new System.Windows.Forms.SaveFileDialog()
             {
-                Filter = "Executable File (*.exe)|*.exe"
+                Filter = "Executable File (*.exe)|*.exe|Dynamic Link Library (*.dll)|*.dll"
             })
             {
                 f.FileOk += (s, e2) => {
@@ -112,7 +111,7 @@ namespace FSharpPlayground
 
                     new System.Threading.Thread(() =>
                     {
-                        CompileToExe(f.FileName, src,true);
+                        CompileToExe(f.FileName, src,true,f.FileName.ToLower().EndsWith("dll") ? "library" : "exe");
                         if(File.Exists(f.FileName))
                         {
                             Dispatcher.Invoke(() => Output.AppendText("Saved to " + f.FileName));
