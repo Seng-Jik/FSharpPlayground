@@ -61,6 +61,7 @@
                         <MenuItem Header="Block Comment" InputGestureText="Ctrl+Shift+L" Name="ContextMenuBlockComment" Command="{StaticResource BlockComment}"/>
                         <Separator/>
                         <MenuItem Header="Save As..." Click="SaveDocument"/>
+                        <MenuItem Header="Save As Template" Click="SaveAsTemplate"/>
                         <MenuItem Header="Save Binary File..." Click="SaveExe"/>
                         <Separator/>
                         <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Name="ContextMenuUndo" Click="Undo"/>

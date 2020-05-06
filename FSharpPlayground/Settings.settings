@@ -17,5 +17,8 @@
     <Setting Name="RunInNewConsole" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="CodeTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">printfn "Hello, world!"</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

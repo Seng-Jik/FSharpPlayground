@@ -312,7 +312,13 @@ namespace FSharpPlayground
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
         {
-            FSharpEditor.Clear();
+            FSharpEditor.Text = Settings.Default.CodeTemplate;
+        }
+
+        private void SaveAsTemplate(object sender = null, RoutedEventArgs e = null)
+        {
+            Settings.Default.CodeTemplate = FSharpEditor.Text;
+            Settings.Default.Save();
         }
 
         private void OpenDocument(object sender = null, RoutedEventArgs e = null)
