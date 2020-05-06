@@ -112,7 +112,7 @@ namespace FSharpPlayground
 
                     new System.Threading.Thread(() =>
                     {
-                        CompileToExe(f.FileName, src);
+                        CompileToExe(f.FileName, src,true);
                         if(File.Exists(f.FileName))
                         {
                             Dispatcher.Invoke(() => Output.AppendText("Saved to " + f.FileName));
@@ -145,7 +145,7 @@ namespace FSharpPlayground
 
             new System.Threading.Thread(() =>
             {
-                var tempTarget = Environment.GetEnvironmentVariable("TEMP") + "/temp.exe";
+                var tempTarget = "temp.exe";
                 KillTempExe();
                 CompileToExe(tempTarget, src);
 
@@ -154,6 +154,7 @@ namespace FSharpPlayground
                     using (var process = new Process())
                     {
                         process.StartInfo.FileName = tempTarget;
+                        process.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
                         process.StartInfo.UseShellExecute = false;
                         process.StartInfo.CreateNoWindow = true;
                         process.StartInfo.RedirectStandardInput = false;
@@ -216,7 +217,7 @@ namespace FSharpPlayground
             }
         }
 
-        void CompileToExe(string outputExe,string src)
+        void CompileToExe(string outputExe,string src,bool optimize = false,string target="exe")
         {
 
             var checker = FSharpChecker.Create(
@@ -235,8 +236,28 @@ namespace FSharpPlayground
             File.WriteAllText(tempSource, src);
 
 
+            var args = 
+                optimize ? (new string[] {  //优化
+                    "fsc.exe",
+                    tempSource,
+                    "--nologo",
+                    "--crossoptimize+",
+                    "--optimize+",
+                    "-o", outputExe,
+                    "--target:"+target,
+                    "--standalone"
+                }) : (new string[] {    // 不优化
+                    "fsc.exe",
+                    tempSource,
+                    "--nologo",
+                    "--crossoptimize-",
+                    "--optimize-",
+                    "-o", outputExe,
+                    "--target:"+target,
+                });
+
             var async = checker.Compile(
-                new string[] { "fsc.exe", "-a", tempSource, "--nologo", "-O", "-o", outputExe, "--target:exe", "--standalone" },
+                args,
                 FSharpOption<string>.None);
 
             var result = Microsoft.FSharp.Control.FSharpAsync.RunSynchronously(
