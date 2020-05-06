@@ -25,7 +25,7 @@ namespace FSharpPlayground
     public partial class MainWindow : SourceChord.FluentWPF.AcrylicWindow
     {
         const string fileFilter = 
-            "F# Code (*.fs;*.fsx)|*.fs;*.fsx|F# Source Code (*.fs)|*.fs|F# Script (*.fsx)|*.fsx|All Files (*.*)|*.*";
+            "F# Code (*.fs;*.fsx;*.fsscript)|*.fs;*.fsx;*.fsscript|F# Source Code (*.fs)|*.fs|F# Script (*.fsx;*.fsscript)|*.fsx;*.fsscript|All Files (*.*)|*.*";
 
         readonly string tempDir = Environment.GetEnvironmentVariable("TEMP") + "/";
 
@@ -57,6 +57,7 @@ namespace FSharpPlayground
             Height = Settings.Default.WindowHeight;
             editorWidthWhenOutputShown = Settings.Default.EditorWidth;
             FSharpEditor.Text = Settings.Default.Code;
+            SetRunInNewConsole.IsChecked = Settings.Default.RunInNewConsole;
 
             if (Environment.GetCommandLineArgs().Length == 2)
             {
@@ -73,6 +74,7 @@ namespace FSharpPlayground
                 Settings.Default.WindowHeight = Height;
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
+                Settings.Default.RunInNewConsole = SetRunInNewConsole.IsChecked;
                 Settings.Default.Save();
 
                 CleanTempDir();
@@ -141,7 +143,9 @@ namespace FSharpPlayground
             SetEditorEnabled(false);
             var src = FSharpEditor.Text;
 
-            if (EditorOutputSplitter.Visibility != Visibility.Visible)
+            var runInOutput = !SetRunInNewConsole.IsChecked;
+
+            if (EditorOutputSplitter.Visibility != Visibility.Visible && runInOutput)
                 HideOrShowOutput();
 
             var orgRunButtoncontent = RunButton.Content;
@@ -160,12 +164,13 @@ namespace FSharpPlayground
                         process.StartInfo.FileName = tempTarget;
                         process.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
                         process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.CreateNoWindow = runInOutput;
                         process.StartInfo.RedirectStandardInput = false;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.StartInfo.RedirectStandardError = true;
+                        process.StartInfo.RedirectStandardOutput = runInOutput;
+                        process.StartInfo.RedirectStandardError = runInOutput;
                         process.Start();
 
+                        
                         // 设置“Run”按钮为“Kill”
                         Dispatcher.Invoke(() =>
                         {
@@ -174,18 +179,22 @@ namespace FSharpPlayground
                             RunButton.Content = "Kill";
                             RunButton.IsEnabled = true;
                         });
-
-                        while (!process.HasExited)
+                        if (runInOutput)
                         {
-                            var log = process.StandardOutput.Read();
-                            if (log >= 0)
-                                Dispatcher.Invoke(() =>
-                                {
-                                    Output.AppendText(((char)(log)).ToString());
-                                });
-                            else
-                                break;
+                            while (!process.HasExited)
+                            {
+                                var log = process.StandardOutput.Read();
+                                if (log >= 0)
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        Output.AppendText(((char)(log)).ToString());
+                                    });
+                                else
+                                    break;
+                            }
                         }
+
+                        process.WaitForExit();
 
                         // 恢复“Run”按钮
                         Dispatcher.Invoke(() =>
@@ -195,16 +204,27 @@ namespace FSharpPlayground
                             RunButton.Content = orgRunButtoncontent;
                         });
 
-                        process.WaitForExit();
-                        var logRemainder = process.StandardOutput.ReadToEnd();
-                        var err = process.StandardError.ReadToEnd();
-                        Dispatcher.Invoke(() => {
-                            Output.AppendText(logRemainder);
-                            Output.AppendText(Environment.NewLine);
-                            Output.AppendText(err);
-                        });
+                        if (runInOutput)
+                        {
+                            var logRemainder = process.StandardOutput.ReadToEnd();
+                            var err = process.StandardError.ReadToEnd();
+                            Dispatcher.Invoke(() =>
+                            {
+                                Output.AppendText(logRemainder);
+                                Output.AppendText(Environment.NewLine);
+                                Output.AppendText(err);
+                            });
+                        }
                         process.Close();
                     }
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (EditorOutputSplitter.Visibility != Visibility.Visible && !runInOutput)
+                            HideOrShowOutput();
+                    });
                 }
 
                 Dispatcher.Invoke(() => SetEditorEnabled(true));
