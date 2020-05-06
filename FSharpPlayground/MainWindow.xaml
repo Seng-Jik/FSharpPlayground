@@ -74,8 +74,7 @@
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll"/>
                         <Separator/>
                         <MenuItem Header="Run in a new console window" IsCheckable="True" Name="SetRunInNewConsole" />
-                        <MenuItem Header="Referenced DLLs..."/>
-                        <MenuItem Header="Referenced F# Code..."/>
+                        <!-- <MenuItem Header="References..."/> -->
 
                     </fw:AcrylicContextMenu>
                 </avalonEdit:TextEditor.ContextMenu>
