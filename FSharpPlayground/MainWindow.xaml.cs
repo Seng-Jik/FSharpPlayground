@@ -504,7 +504,7 @@ namespace FSharpPlayground
 
         private void CopyDLLsToTemp()
         {
-            var fileInfo = new FileInfo("FSharp.Core.dll");
+            var fileInfo = new FileInfo(System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "FSharp.Core.dll");
             if(!File.Exists(tempDir + fileInfo.Name))
                 fileInfo.CopyTo(tempDir + fileInfo.Name);
         }
