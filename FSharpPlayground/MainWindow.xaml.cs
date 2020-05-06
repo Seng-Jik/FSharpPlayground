@@ -27,6 +27,8 @@ namespace FSharpPlayground
         const string fileFilter = 
             "F# Code (*.fs;*.fsx)|*.fs;*.fsx|F# Source Code (*.fs)|*.fs|F# Script (*.fsx)|*.fsx|All Files (*.*)|*.*";
 
+        readonly string tempDir = Environment.GetEnvironmentVariable("TEMP") + "/";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -73,10 +75,8 @@ namespace FSharpPlayground
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.Save();
 
-                File.Delete("temp.exe");
+                CleanTempDir();
             };
-
-            File.Delete("temp.exe");
 
             // 寻找Fira Code字体
             InstalledFontCollection fonts = new InstalledFontCollection();
@@ -148,9 +148,10 @@ namespace FSharpPlayground
 
             new System.Threading.Thread(() =>
             {
-                var tempTarget = "temp.exe";
+                var tempTarget = tempDir + "temp.exe";
                 KillTempExe();
                 CompileToExe(tempTarget, src);
+                CopyDLLsToTemp();
 
                 if (File.Exists(tempTarget))
                 {
@@ -201,7 +202,6 @@ namespace FSharpPlayground
                     }
                 }
 
-                File.Delete(tempTarget);
                 Dispatcher.Invoke(() => SetEditorEnabled(true));
             }).Start();
         }
@@ -422,6 +422,28 @@ namespace FSharpPlayground
 
                 f.ShowDialog();
             }
+        }
+
+        string[] dlls = new string[]
+        {
+                "FSharp.Core.dll"
+        };
+
+        private void CopyDLLsToTemp()
+        {
+            foreach(var filePath in dlls)
+            {
+                var fileInfo = new FileInfo(filePath);
+                if(!File.Exists(tempDir + fileInfo.Name))
+                    fileInfo.CopyTo(tempDir + fileInfo.Name);
+            }
+        }
+
+        private void CleanTempDir()
+        {
+            foreach (var filePath in dlls)
+                File.Delete(tempDir + new FileInfo(filePath).Name);
+            File.Delete(tempDir + "temp.exe");
         }
     }
 }
