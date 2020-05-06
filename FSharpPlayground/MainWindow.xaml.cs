@@ -227,6 +227,7 @@ namespace FSharpPlayground
                     });
                 }
 
+                File.Delete(tempTarget);
                 Dispatcher.Invoke(() => SetEditorEnabled(true));
             }).Start();
         }
@@ -260,9 +261,6 @@ namespace FSharpPlayground
 
             var tempSource = Environment.GetEnvironmentVariable("TEMP") + "/temp.fs";
 
-
-            File.WriteAllText(tempSource, src);
-
             var args = new List<string>
             {
                 "fsc.exe",
@@ -279,6 +277,57 @@ namespace FSharpPlayground
             {
                 args.Add("--standalone");
             }
+
+            var lines = new List<string>();
+            var loads = new List<FileInfo>();
+            // 提取#r、#I和#load
+            using (var reader = new StringReader(src))
+            {
+                var libDirs = new List<string>();
+                var references = new List<string>();
+                
+                while (reader.Peek() > 0)
+                {
+                    var line = reader.ReadLine();
+                    var lineTrimed = line.Trim();
+
+                    if (lineTrimed.StartsWith("#r "))
+                    {
+                        references.Add(lineTrimed.Substring(2).Trim().Trim('\"').Trim());
+                    }
+                    else if (lineTrimed.StartsWith("#I "))
+                    {
+                        libDirs.Add("\"" + lineTrimed.Substring(2).Trim().Trim('\"').Trim() + "\"");
+                    }
+                    else if (lineTrimed.StartsWith("#load "))
+                    {
+                        var fileName = lineTrimed.Substring(2).Trim().Trim('\"').Trim();
+                    }
+                    else
+                        lines.Add(line);
+                }
+
+                if(libDirs.Count > 0)
+                {
+                    args.Add("-I:" + libDirs.Aggregate((a, b) =>
+                    {
+                        return a + "," + b;
+                    }));
+                }
+
+                if (references.Count > 0)
+                {
+                    foreach(var r in references)
+                        args.Add("-r:" + r);
+
+                    if(!optimize)
+                        args.Add("--standalone");
+                }
+
+                // 搜索并复制loads到运行目录，并将其附加到编译器上
+            }
+
+            File.WriteAllLines(tempSource, lines);
 
             var async = checker.Compile(
                 args.ToArray(),
@@ -451,25 +500,17 @@ namespace FSharpPlayground
             }
         }
 
-        string[] dlls = new string[]
-        {
-                "FSharp.Core.dll"
-        };
 
         private void CopyDLLsToTemp()
         {
-            foreach(var filePath in dlls)
-            {
-                var fileInfo = new FileInfo(filePath);
-                if(!File.Exists(tempDir + fileInfo.Name))
-                    fileInfo.CopyTo(tempDir + fileInfo.Name);
-            }
+            var fileInfo = new FileInfo("FSharp.Core.dll");
+            if(!File.Exists(tempDir + fileInfo.Name))
+                fileInfo.CopyTo(tempDir + fileInfo.Name);
         }
 
         private void CleanTempDir()
         {
-            foreach (var filePath in dlls)
-                File.Delete(tempDir + new FileInfo(filePath).Name);
+            File.Delete(tempDir + "FSharp.Core.dll");
             File.Delete(tempDir + "temp.exe");
         }
     }
