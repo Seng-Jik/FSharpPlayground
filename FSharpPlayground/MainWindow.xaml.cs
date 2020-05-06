@@ -264,7 +264,6 @@ namespace FSharpPlayground
             var args = new List<string>
             {
                 "fsc.exe",
-                tempSource,
                 "--nologo",
                 "--crossoptimize" + (optimize ? "+" : "-"),
                 "--optimize" + (optimize ? "+" : "-"),
@@ -279,7 +278,6 @@ namespace FSharpPlayground
             }
 
             var lines = new List<string>();
-            var loads = new List<FileInfo>();
             // 提取#r、#I和#load
             using (var reader = new StringReader(src))
             {
@@ -301,7 +299,9 @@ namespace FSharpPlayground
                     }
                     else if (lineTrimed.StartsWith("#load "))
                     {
-                        var fileName = lineTrimed.Substring(2).Trim().Trim('\"').Trim();
+                        var fileName = lineTrimed.Substring(5).Trim().Trim('\"').Trim();
+                        var warpedFileName = "\"" + fileName + "\"";
+                        args.Add(warpedFileName);
                     }
                     else
                         lines.Add(line);
@@ -328,6 +328,7 @@ namespace FSharpPlayground
             }
 
             File.WriteAllLines(tempSource, lines);
+            args.Add(tempSource);
 
             var async = checker.Compile(
                 args.ToArray(),
