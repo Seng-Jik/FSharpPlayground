@@ -300,6 +300,19 @@ namespace FSharpPlayground
                     else if (lineTrimed.StartsWith("#load "))
                     {
                         var fileName = lineTrimed.Substring(5).Trim().Trim('\"').Trim();
+                        
+                        if(!File.Exists(fileName))
+                        {
+                            foreach(var i in libDirs)
+                            {
+                                var s = i.Trim().Trim('\"').Trim() + "/" + fileName;
+                                if (File.Exists(s))
+                                {
+                                    fileName = s;
+                                    break;
+                                }
+                            }
+                        }
                         var warpedFileName = "\"" + fileName + "\"";
                         args.Add(warpedFileName);
                     }
