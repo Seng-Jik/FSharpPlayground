@@ -13,7 +13,7 @@
 		
 		<!-- Block Comment -->
 		<Span color="Comment" multiline="true">
-			<Begin>\(\*</Begin>
+			<Begin>\(\*[^\)]</Begin>
 			<End>\*\)</End>
 		</Span>
     

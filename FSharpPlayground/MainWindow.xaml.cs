@@ -25,7 +25,9 @@ namespace FSharpPlayground
     public partial class MainWindow : SourceChord.FluentWPF.AcrylicWindow
     {
         const string fileFilter = 
-            "F# Code (*.fs;*.fsx)|*.fs;*.fsx|F# Source Code (*.fs)|*.fs|F# Script (*.fsx)|*.fsx|All Files (*.*)|*.*";
+            "F# Code (*.fs;*.fsx;*.fsscript)|*.fs;*.fsx;*.fsscript|F# Source Code (*.fs)|*.fs|F# Script (*.fsx;*.fsscript)|*.fsx;*.fsscript|All Files (*.*)|*.*";
+
+        readonly string tempDir = Environment.GetEnvironmentVariable("TEMP") + "/";
 
         public MainWindow()
         {
@@ -55,6 +57,7 @@ namespace FSharpPlayground
             Height = Settings.Default.WindowHeight;
             editorWidthWhenOutputShown = Settings.Default.EditorWidth;
             FSharpEditor.Text = Settings.Default.Code;
+            SetRunInNewConsole.IsChecked = Settings.Default.RunInNewConsole;
 
             if (Environment.GetCommandLineArgs().Length == 2)
             {
@@ -71,7 +74,10 @@ namespace FSharpPlayground
                 Settings.Default.WindowHeight = Height;
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
+                Settings.Default.RunInNewConsole = SetRunInNewConsole.IsChecked;
                 Settings.Default.Save();
+
+                CleanTempDir();
             };
 
             // 寻找Fira Code字体
@@ -94,7 +100,6 @@ namespace FSharpPlayground
             NewButton.IsEnabled = enabled;
             OpenButton.IsEnabled = enabled;
             RunButton.IsEnabled = enabled;
-            SaveExeButton.IsEnabled = enabled;
             storyEditorEnabled = enabled;
         }
 
@@ -102,7 +107,7 @@ namespace FSharpPlayground
         {
             using (var f = new System.Windows.Forms.SaveFileDialog()
             {
-                Filter = "Executable File (*.exe)|*.exe"
+                Filter = "Executable File (*.exe)|*.exe|Dynamic Link Library (*.dll)|*.dll"
             })
             {
                 f.FileOk += (s, e2) => {
@@ -112,7 +117,7 @@ namespace FSharpPlayground
 
                     new System.Threading.Thread(() =>
                     {
-                        CompileToExe(f.FileName, src);
+                        CompileToExe(f.FileName, src,true,f.FileName.ToLower().EndsWith("dll") ? "library" : "exe");
                         if(File.Exists(f.FileName))
                         {
                             Dispatcher.Invoke(() => Output.AppendText("Saved to " + f.FileName));
@@ -138,29 +143,34 @@ namespace FSharpPlayground
             SetEditorEnabled(false);
             var src = FSharpEditor.Text;
 
-            if (EditorOutputSplitter.Visibility != Visibility.Visible)
+            var runInOutput = !SetRunInNewConsole.IsChecked;
+
+            if (EditorOutputSplitter.Visibility != Visibility.Visible && runInOutput)
                 HideOrShowOutput();
 
             var orgRunButtoncontent = RunButton.Content;
 
             new System.Threading.Thread(() =>
             {
-                var tempTarget = Environment.GetEnvironmentVariable("TEMP") + "/temp.exe";
+                var tempTarget = tempDir + "temp.exe";
                 KillTempExe();
                 CompileToExe(tempTarget, src);
+                CopyDLLsToTemp();
 
                 if (File.Exists(tempTarget))
                 {
                     using (var process = new Process())
                     {
                         process.StartInfo.FileName = tempTarget;
+                        process.StartInfo.WorkingDirectory = Environment.CurrentDirectory;
                         process.StartInfo.UseShellExecute = false;
-                        process.StartInfo.CreateNoWindow = true;
+                        process.StartInfo.CreateNoWindow = runInOutput;
                         process.StartInfo.RedirectStandardInput = false;
-                        process.StartInfo.RedirectStandardOutput = true;
-                        process.StartInfo.RedirectStandardError = true;
+                        process.StartInfo.RedirectStandardOutput = runInOutput;
+                        process.StartInfo.RedirectStandardError = runInOutput;
                         process.Start();
 
+                        
                         // 设置“Run”按钮为“Kill”
                         Dispatcher.Invoke(() =>
                         {
@@ -169,16 +179,22 @@ namespace FSharpPlayground
                             RunButton.Content = "Kill";
                             RunButton.IsEnabled = true;
                         });
-
-                        while (!process.HasExited)
+                        if (runInOutput)
                         {
-                            var log = process.StandardOutput.ReadLine();
-                            if(log != null)
-                                Dispatcher.Invoke(() => {
-                                    Output.AppendText(log);
-                                    Output.AppendText(Environment.NewLine);
-                                });
+                            while (!process.HasExited)
+                            {
+                                var log = process.StandardOutput.Read();
+                                if (log >= 0)
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        Output.AppendText(((char)(log)).ToString());
+                                    });
+                                else
+                                    break;
+                            }
                         }
+
+                        process.WaitForExit();
 
                         // 恢复“Run”按钮
                         Dispatcher.Invoke(() =>
@@ -188,11 +204,27 @@ namespace FSharpPlayground
                             RunButton.Content = orgRunButtoncontent;
                         });
 
-                        process.WaitForExit();
-                        var logRemainder = process.StandardOutput.ReadToEnd();
-                        Dispatcher.Invoke(() => Output.AppendText(logRemainder));
+                        if (runInOutput)
+                        {
+                            var logRemainder = process.StandardOutput.ReadToEnd();
+                            var err = process.StandardError.ReadToEnd();
+                            Dispatcher.Invoke(() =>
+                            {
+                                Output.AppendText(logRemainder);
+                                Output.AppendText(Environment.NewLine);
+                                Output.AppendText(err);
+                            });
+                        }
                         process.Close();
                     }
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (EditorOutputSplitter.Visibility != Visibility.Visible && !runInOutput)
+                            HideOrShowOutput();
+                    });
                 }
 
                 File.Delete(tempTarget);
@@ -214,7 +246,8 @@ namespace FSharpPlayground
             }
         }
 
-        void CompileToExe(string outputExe,string src)
+        List<string> waitForClean = new List<string>();
+        void CompileToExe(string outputExe,string src,bool optimize = false,string target="exe")
         {
 
             var checker = FSharpChecker.Create(
@@ -229,12 +262,119 @@ namespace FSharpPlayground
 
             var tempSource = Environment.GetEnvironmentVariable("TEMP") + "/temp.fs";
 
+            var args = new List<string>
+            {
+                "fsc.exe",
+                "--nologo",
+                "--crossoptimize" + (optimize ? "+" : "-"),
+                "--optimize" + (optimize ? "+" : "-"),
+                "-o", outputExe,
+                "--target:"+target
+            };
 
-            File.WriteAllText(tempSource, src);
+            if (optimize)
+            {
+                args.Add("--standalone");
+            }
 
+            var lines = new List<string>();
+            var loads = new List<string>();
+            var libDirs = new List<string>();
+            // 提取#r、#I和#load
+            using (var reader = new StringReader(src))
+            {
+                var references = new List<string>();
+                
+                while (reader.Peek() > 0)
+                {
+                    var line = reader.ReadLine();
+                    var lineTrimed = line.Trim();
+
+                    if (lineTrimed.StartsWith("#r "))
+                    {
+                        references.Add(lineTrimed.Substring(2).Trim().Trim('\"').Trim());
+                        lines.Add("");
+                    }
+                    else if (lineTrimed.StartsWith("#I "))
+                    {
+                        libDirs.Add("\"" + lineTrimed.Substring(2).Trim().Trim('\"').Trim() + "\"");
+                        lines.Add("");
+                    }
+                    else if (lineTrimed.StartsWith("#load "))
+                    {
+                        loads.Add(lineTrimed.Substring(5).Trim().Trim('\"').Trim());
+                        lines.Add("");
+                    }
+                    else
+                        lines.Add(line);
+                }
+
+                if(libDirs.Count > 0)
+                {
+                    args.Add("-I:" + libDirs.Aggregate((a, b) =>
+                    {
+                        return a + "," + b;
+                    }));
+                }
+
+                if (references.Count > 0)
+                {
+                    foreach (var r in references)
+                    {
+                        args.Add("-r:" + r);
+
+                        // 搜索dll并复制
+                        var path = r.Trim().Trim('\"').Trim();
+                        var n = new FileInfo(path).Name;
+                        if (!File.Exists(tempDir + n))
+                        {
+                            if (!File.Exists(path))
+                            {
+                                foreach (var dir in libDirs)
+                                {
+                                    var s = dir.Trim().Trim('\"').Trim() + "/" + path;
+                                    if (File.Exists(s))
+                                    {
+                                        path = s;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (File.Exists(path))
+                            {
+                                File.Copy(path, tempDir + n);
+                                waitForClean.Add(n);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach(var load in loads)
+            {
+                var fileName = load;
+                if (!File.Exists(fileName))
+                {
+                    foreach (var i in libDirs)
+                    {
+                        var s = i.Trim().Trim('\"').Trim() + "/" + fileName;
+                        if (File.Exists(s))
+                        {
+                            fileName = s;
+                            break;
+                        }
+                    }
+                }
+                var warpedFileName = "\"" + fileName + "\"";
+                args.Add(warpedFileName);
+            }
+
+            File.WriteAllLines(tempSource, lines);
+            args.Add("\"" + tempSource + "\"");
 
             var async = checker.Compile(
-                new string[] { "fsc.exe", "-a", tempSource, "--nologo", "-O", "-o", outputExe, "--target:exe", "--standalone" },
+                args.ToArray(),
                 FSharpOption<string>.None);
 
             var result = Microsoft.FSharp.Control.FSharpAsync.RunSynchronously(
@@ -265,7 +405,13 @@ namespace FSharpPlayground
 
         private void NewDocument(object sender = null, RoutedEventArgs e = null)
         {
-            FSharpEditor.Clear();
+            FSharpEditor.Text = Settings.Default.CodeTemplate;
+        }
+
+        private void SaveAsTemplate(object sender = null, RoutedEventArgs e = null)
+        {
+            Settings.Default.CodeTemplate = FSharpEditor.Text;
+            Settings.Default.Save();
         }
 
         private void OpenDocument(object sender = null, RoutedEventArgs e = null)
@@ -396,6 +542,24 @@ namespace FSharpPlayground
 
                 f.ShowDialog();
             }
+        }
+
+
+        private void CopyDLLsToTemp()
+        {
+            var fileInfo = new FileInfo(System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "FSharp.Core.dll");
+            if(!File.Exists(tempDir + fileInfo.Name))
+                fileInfo.CopyTo(tempDir + fileInfo.Name);
+        }
+
+        private void CleanTempDir()
+        {
+            File.Delete(tempDir + "FSharp.Core.dll");
+            File.Delete(tempDir + "temp.exe");
+
+            foreach (var i in waitForClean)
+                File.Delete(tempDir + i);
+            waitForClean.Clear();
         }
     }
 }

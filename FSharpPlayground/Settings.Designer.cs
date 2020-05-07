@@ -70,5 +70,29 @@ namespace FSharpPlayground {
                 this["EditorWidth"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RunInNewConsole {
+            get {
+                return ((bool)(this["RunInNewConsole"]));
+            }
+            set {
+                this["RunInNewConsole"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("printfn \"Hello, world!\"")]
+        public string CodeTemplate {
+            get {
+                return ((string)(this["CodeTemplate"]));
+            }
+            set {
+                this["CodeTemplate"] = value;
+            }
+        }
     }
 }

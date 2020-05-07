@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:FSharpPlayground"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         mc:Ignorable="d"
-        MinWidth="710"
-        MinHeight="200"
+        MinWidth="450"
+        MinHeight="100"
         fw:PointerTracker.Enabled="True"
         TintOpacity="0.8"
         Title="F# Playground" Height="600" Width="1024" WindowStartupLocation="CenterScreen" Icon="/fsharp256.ico">
@@ -60,6 +60,10 @@
                         <MenuItem Header="Line Comment" InputGestureText="Ctrl+L" Command="{StaticResource LineComment}"/>
                         <MenuItem Header="Block Comment" InputGestureText="Ctrl+Shift+L" Name="ContextMenuBlockComment" Command="{StaticResource BlockComment}"/>
                         <Separator/>
+                        <MenuItem Header="Save As..." Click="SaveDocument"/>
+                        <MenuItem Header="Save As Template" Click="SaveAsTemplate"/>
+                        <MenuItem Header="Save Binary File..." Click="SaveExe"/>
+                        <Separator/>
                         <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Name="ContextMenuUndo" Click="Undo"/>
                         <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Name="ContextMenuRedo" Click="Redo"/>
                         <Separator/>
@@ -69,6 +73,10 @@
                         <MenuItem Header="Delete" InputGestureText="Del" Name="ContextMenuDel" Click="Del"/>
                         <Separator/>
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll"/>
+                        <Separator/>
+                        <MenuItem Header="Run in a new console window" IsCheckable="True" Name="SetRunInNewConsole" />
+                        <!-- <MenuItem Header="References..."/> -->
+
                     </fw:AcrylicContextMenu>
                 </avalonEdit:TextEditor.ContextMenu>
             </avalonEdit:TextEditor>
@@ -106,15 +114,11 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="NewDocument" Name="NewButton">New</Button>
             <Button Grid.Column="1" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="OpenDocument" Name="OpenButton">Open</Button>
-            <Button Grid.Column="2" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveDocument">Save As</Button>
-            <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="Run" Name="RunButton">Run (or Ctrl+Enter)</Button>
-            <Button Grid.Column="4" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="HideOrShowOutput" Name="HideOrShowOutputButton">Show Output</Button>
-            <Button Grid.Column="5" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="SaveExe" Name="SaveExeButton">Save Executable</Button>
+            <Button Grid.Column="2" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="Run" Name="RunButton">Run (or Ctrl+Enter)</Button>
+            <Button Grid.Column="3" Style="{StaticResource ButtonRevealStyle}" Background="Transparent" Click="HideOrShowOutput" Name="HideOrShowOutputButton">Show Output</Button>
         </Grid>
     </Grid>
 </fw:AcrylicWindow>

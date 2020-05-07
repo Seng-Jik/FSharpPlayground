@@ -14,5 +14,11 @@
     <Setting Name="EditorWidth" Type="System.Double" Scope="User">
       <Value Profile="(Default)">512</Value>
     </Setting>
+    <Setting Name="RunInNewConsole" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CodeTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">printfn "Hello, world!"</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
