@@ -246,6 +246,7 @@ namespace FSharpPlayground
             }
         }
 
+        List<string> waitForClean = new List<string>();
         void CompileToExe(string outputExe,string src,bool optimize = false,string target="exe")
         {
 
@@ -330,14 +331,36 @@ namespace FSharpPlayground
 
                 if (references.Count > 0)
                 {
-                    foreach(var r in references)
+                    foreach (var r in references)
+                    {
                         args.Add("-r:" + r);
 
-                    if(!optimize)
-                        args.Add("--standalone");
-                }
+                        // 搜索dll并复制
+                        var path = r.Trim().Trim('\"').Trim();
+                        var n = new FileInfo(path).Name;
+                        if (!File.Exists(tempDir + n))
+                        {
+                            if (!File.Exists(path))
+                            {
+                                foreach (var dir in libDirs)
+                                {
+                                    var s = dir.Trim().Trim('\"').Trim() + "/" + path;
+                                    if (File.Exists(s))
+                                    {
+                                        path = s;
+                                        break;
+                                    }
+                                }
+                            }
 
-                // 搜索并复制loads到运行目录，并将其附加到编译器上
+                            if (File.Exists(path))
+                            {
+                                File.Copy(path, tempDir + n);
+                                waitForClean.Add(n);
+                            }
+                        }
+                    }
+                }
             }
 
             File.WriteAllLines(tempSource, lines);
@@ -526,6 +549,10 @@ namespace FSharpPlayground
         {
             File.Delete(tempDir + "FSharp.Core.dll");
             File.Delete(tempDir + "temp.exe");
+
+            foreach (var i in waitForClean)
+                File.Delete(tempDir + i);
+            waitForClean.Clear();
         }
     }
 }
