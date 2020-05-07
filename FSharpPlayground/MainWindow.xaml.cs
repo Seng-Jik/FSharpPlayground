@@ -269,8 +269,7 @@ namespace FSharpPlayground
                 "--crossoptimize" + (optimize ? "+" : "-"),
                 "--optimize" + (optimize ? "+" : "-"),
                 "-o", outputExe,
-                "--target:"+target,
-                "--noframework"
+                "--target:"+target
             };
 
             if (optimize)
@@ -279,10 +278,11 @@ namespace FSharpPlayground
             }
 
             var lines = new List<string>();
+            var loads = new List<string>();
+            var libDirs = new List<string>();
             // 提取#r、#I和#load
             using (var reader = new StringReader(src))
             {
-                var libDirs = new List<string>();
                 var references = new List<string>();
                 
                 while (reader.Peek() > 0)
@@ -293,29 +293,17 @@ namespace FSharpPlayground
                     if (lineTrimed.StartsWith("#r "))
                     {
                         references.Add(lineTrimed.Substring(2).Trim().Trim('\"').Trim());
+                        lines.Add("");
                     }
                     else if (lineTrimed.StartsWith("#I "))
                     {
                         libDirs.Add("\"" + lineTrimed.Substring(2).Trim().Trim('\"').Trim() + "\"");
+                        lines.Add("");
                     }
                     else if (lineTrimed.StartsWith("#load "))
                     {
-                        var fileName = lineTrimed.Substring(5).Trim().Trim('\"').Trim();
-                        
-                        if(!File.Exists(fileName))
-                        {
-                            foreach(var i in libDirs)
-                            {
-                                var s = i.Trim().Trim('\"').Trim() + "/" + fileName;
-                                if (File.Exists(s))
-                                {
-                                    fileName = s;
-                                    break;
-                                }
-                            }
-                        }
-                        var warpedFileName = "\"" + fileName + "\"";
-                        args.Add(warpedFileName);
+                        loads.Add(lineTrimed.Substring(5).Trim().Trim('\"').Trim());
+                        lines.Add("");
                     }
                     else
                         lines.Add(line);
@@ -363,8 +351,27 @@ namespace FSharpPlayground
                 }
             }
 
+            foreach(var load in loads)
+            {
+                var fileName = load;
+                if (!File.Exists(fileName))
+                {
+                    foreach (var i in libDirs)
+                    {
+                        var s = i.Trim().Trim('\"').Trim() + "/" + fileName;
+                        if (File.Exists(s))
+                        {
+                            fileName = s;
+                            break;
+                        }
+                    }
+                }
+                var warpedFileName = "\"" + fileName + "\"";
+                args.Add(warpedFileName);
+            }
+
             File.WriteAllLines(tempSource, lines);
-            args.Add(tempSource);
+            args.Add("\"" + tempSource + "\"");
 
             var async = checker.Compile(
                 args.ToArray(),
