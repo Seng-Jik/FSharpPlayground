@@ -15,7 +15,8 @@ Now you can load library and codes like this:
 
 # FAQ
 ##### FS8004:Assembly reference 'mscorlib.dll' was not found or is invalid
-You can install [.NET Framework Dev Pack 4.6.2](https://dotnet.microsoft.com/download/dotnet-framework/net462).
+You can install 
+[.NET Framework Dev Pack 4.6.2](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net462-developer-pack-offline-installer).
 
 # Changelog
 
