@@ -58,6 +58,11 @@ namespace FSharpPlayground
             editorWidthWhenOutputShown = Settings.Default.EditorWidth;
             FSharpEditor.Text = Settings.Default.Code;
             SetRunInNewConsole.IsChecked = Settings.Default.RunInNewConsole;
+            Output.WordWrap = Settings.Default.WordWrapOutput;
+            OutputWordWrapMenuItem.IsChecked = Output.WordWrap;
+
+            OutputWordWrapMenuItem.Checked += (e, o) => Output.WordWrap = true;
+            OutputWordWrapMenuItem.Unchecked += (e, o) => Output.WordWrap = false;
 
             if (Environment.GetCommandLineArgs().Length == 2)
             {
@@ -75,9 +80,16 @@ namespace FSharpPlayground
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.RunInNewConsole = SetRunInNewConsole.IsChecked;
+                Settings.Default.WordWrapOutput = Output.WordWrap;
                 Settings.Default.Save();
 
                 CleanTempDir();
+            };
+
+            EditorOutputSplitter.DragCompleted += (e, o) =>
+            {
+                if(EditorOutputSplitter.IsVisible)
+                    editorWidthWhenOutputShown = OutputCol.ActualWidth;
             };
 
             // 寻找Fira Code字体
@@ -454,6 +466,7 @@ namespace FSharpPlayground
             if(EditorOutputSplitter.Visibility == Visibility.Visible)
             {
                 editorWidthWhenOutputShown = OutputCol.ActualWidth;
+                OutputCol.MinWidth = 0;
                 OutputCol.Width = new GridLength(0);
                 EditorOutputSplitterCol.Width = new GridLength(0);
                 EditorOutputSplitter.Visibility = Visibility.Collapsed;
@@ -464,6 +477,7 @@ namespace FSharpPlayground
             {
                 var w = editorWidthWhenOutputShown;
                 EditorOutputSplitterCol.Width = new GridLength(3);
+                OutputCol.MinWidth = 100;
                 OutputCol.Width = new GridLength(w);
                 EditorOutputSplitter.Visibility = Visibility.Visible;
                 Output.Visibility = Visibility.Visible;

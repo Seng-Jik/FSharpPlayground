@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<SyntaxDefinition name="Yukimi" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<SyntaxDefinition name="FSharp" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 
   <!-- __COLORS__ -->
 	
@@ -12,8 +12,9 @@
 		<Span color="Comment" begin="//" />
 		
 		<!-- Block Comment -->
+    <Span begin="\(\*\)" /> <!-- This is not comment! This is an operator. -->
 		<Span color="Comment" multiline="true">
-			<Begin>\(\*[^\)]</Begin>
+			<Begin>\(\*</Begin>
 			<End>\*\)</End>
 		</Span>
     
@@ -46,7 +47,7 @@
         
         <!-- String Format -->
         <Rule color="StringFormat">
-          %[0-9]*[AaDdFfCcSsBb]
+          %[(0-9)|\.]*[AaDdFfCcSsBb]
         </Rule>
       </RuleSet>
     </Span>
@@ -162,6 +163,7 @@
       <Word>downto</Word>
       <Word>downcast</Word>
       <Word>done</Word>
+      <Word>do!</Word>
       <Word>do</Word>
       <Word>delegate</Word>
       <Word>default</Word>
@@ -172,6 +174,10 @@
       <Word>as</Word>
       <Word>and</Word>
       <Word>abstract</Word>
+      <Word>raise</Word>
+      <Word>failwith</Word>
+      <Word>invalidArg</Word>
+      <Word>invalidOp</Word>
       <Word>-&gt;</Word>
     </Keywords>
 
@@ -189,6 +195,7 @@
       <Word>int16</Word>
       <Word>uint16</Word>
       <Word>int</Word>
+      <Word>uint</Word>
       <Word>uint32</Word>
       <Word>int64</Word>
       <Word>uint64</Word>

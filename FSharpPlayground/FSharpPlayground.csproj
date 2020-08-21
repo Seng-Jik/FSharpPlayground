@@ -39,6 +39,7 @@
     <PackageReference Include="AvalonEdit" Version="6.0.1" />
     <PackageReference Include="FluentWPF" Version="0.8.0" />
     <PackageReference Include="FSharp.Compiler.Service" Version="35.0.0" />
+    <PackageReference Include="FSharp.Core" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>

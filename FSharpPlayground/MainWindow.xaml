@@ -102,6 +102,8 @@
                         <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="CopyOutput"/>
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAllOutput"/>
                         <MenuItem Header="Save As" Click="SaveOutputAs" />
+                        <Separator/>
+                        <MenuItem Header="Word Wrap" IsChecked="false" IsCheckable="True" Name="OutputWordWrapMenuItem" />
                     </fw:AcrylicContextMenu>
                 </avalonEdit:TextEditor.ContextMenu>
             </avalonEdit:TextEditor>

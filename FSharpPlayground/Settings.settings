@@ -20,5 +20,8 @@
     <Setting Name="CodeTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)">printfn "Hello, world!"</Value>
     </Setting>
+    <Setting Name="WordWrapOutput" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
