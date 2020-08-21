@@ -60,6 +60,8 @@ namespace FSharpPlayground
             SetRunInNewConsole.IsChecked = Settings.Default.RunInNewConsole;
             Output.WordWrap = Settings.Default.WordWrapOutput;
             OutputWordWrapMenuItem.IsChecked = Output.WordWrap;
+            if (Settings.Default.WindowMaxmized)
+                WindowState = WindowState.Maximized;
 
             OutputWordWrapMenuItem.Checked += (e, o) => Output.WordWrap = true;
             OutputWordWrapMenuItem.Unchecked += (e, o) => Output.WordWrap = false;
@@ -75,8 +77,14 @@ namespace FSharpPlayground
             Closing += (o, e) =>
             {
                 KillTempExe();
-                Settings.Default.WindowWidth = Width;
-                Settings.Default.WindowHeight = Height;
+                if (WindowState == WindowState.Maximized)
+                    Settings.Default.WindowMaxmized = true;
+                else
+                {
+                    Settings.Default.WindowMaxmized = false;
+                    Settings.Default.WindowWidth = Width;
+                    Settings.Default.WindowHeight = Height;
+                }
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.RunInNewConsole = SetRunInNewConsole.IsChecked;
@@ -92,11 +100,11 @@ namespace FSharpPlayground
                     editorWidthWhenOutputShown = OutputCol.ActualWidth;
             };
 
-            // 寻找Fira Code字体
+            // 寻找字体
             InstalledFontCollection fonts = new InstalledFontCollection();
             foreach (var family in fonts.Families)
             {
-                if(family.Name.StartsWith("Fira Code"))
+                if(family.Name.StartsWith("Fira Code") || family.Name.StartsWith ("Envy Code"))
                 {
                     FSharpEditor.FontFamily = new FontFamily(family.Name);
                     Output.FontFamily = new FontFamily(family.Name);

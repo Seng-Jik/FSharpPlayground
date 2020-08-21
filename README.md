@@ -24,6 +24,8 @@ You can install
 1. Update FSharp.Core to version 4.7.2.
 1. Output window can be set to word wrap mode.
 1. Remove .NET Core version.
+1. Support Font "Envy Code".
+1. Bug fix: Save the maximize state.
 1. Bug fix: Output window bugs.
 1. Bug fix: Highlight bugs.
 1. Bug fix: Code Runner bugs.

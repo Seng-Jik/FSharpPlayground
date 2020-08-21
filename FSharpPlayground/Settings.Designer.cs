@@ -106,5 +106,17 @@ namespace FSharpPlayground {
                 this["WordWrapOutput"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool WindowMaxmized {
+            get {
+                return ((bool)(this["WindowMaxmized"]));
+            }
+            set {
+                this["WindowMaxmized"] = value;
+            }
+        }
     }
 }
