@@ -331,6 +331,11 @@ namespace FSharpPlayground
 
                 if (references.Count > 0)
                 {
+                    if (!optimize)  // 因为在选定Optimized选项时已经具有了standalone选项，所以在此处需要补一个standalone选项
+                    {
+                        args.Add("--standalone");
+                    }
+
                     foreach (var r in references)
                     {
                         args.Add("-r:" + r);
