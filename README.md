@@ -20,6 +20,9 @@ You can install
 
 # Changelog
 
+## v1.2.1
+1. Bug fix: Highlight for single character value.
+
 ## v1.2
 1. Update FSharp.Core to version 4.7.2.
 1. Output window can be set to word wrap mode.

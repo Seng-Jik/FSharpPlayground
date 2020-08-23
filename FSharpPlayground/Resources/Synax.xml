@@ -31,6 +31,11 @@
       ([eE][+-]?[0-9]+)? # optional exponent
       [uyslnLUfFIMm]?[yslLn]?
     </Rule>
+
+    <!-- Single Character -->
+    <Rule color="StringLiteral">
+      \'[\\]?.\'
+    </Rule>
     
     <!-- String-->
     <Span color="StringLiteral" multiline="true">
