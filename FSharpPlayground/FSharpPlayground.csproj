@@ -14,9 +14,9 @@
     <Description>https://github.com/SmallLuma/FSharpPlayground</Description>
     <PackageReleaseNotes>https://github.com/SmallLuma/FSharpPlayground</PackageReleaseNotes>
     <Copyright>https://github.com/SmallLuma/FSharpPlayground</Copyright>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
-    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.1.0</AssemblyVersion>
+    <FileVersion>1.2.1.0</FileVersion>
+    <Version>1.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
