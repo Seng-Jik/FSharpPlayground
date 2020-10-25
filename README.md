@@ -20,6 +20,9 @@ You can install
 
 # Changelog
 
+## v1.2.2
+1. Code Runner: Runner can be set to using glot.io API.
+
 ## v1.2.1
 1. Bug fix: Highlight for single character value.
 

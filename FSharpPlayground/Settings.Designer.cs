@@ -118,5 +118,29 @@ namespace FSharpPlayground {
                 this["WindowMaxmized"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UsingGlotIO {
+            get {
+                return ((bool)(this["UsingGlotIO"]));
+            }
+            set {
+                this["UsingGlotIO"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GlotIOAuth {
+            get {
+                return ((string)(this["GlotIOAuth"]));
+            }
+            set {
+                this["GlotIOAuth"] = value;
+            }
+        }
     }
 }

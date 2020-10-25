@@ -58,6 +58,7 @@ namespace FSharpPlayground
             editorWidthWhenOutputShown = Settings.Default.EditorWidth;
             FSharpEditor.Text = Settings.Default.Code;
             SetRunInNewConsole.IsChecked = Settings.Default.RunInNewConsole;
+            SetUsingGlotIOAPI.IsChecked = Settings.Default.UsingGlotIO;
             Output.WordWrap = Settings.Default.WordWrapOutput;
             OutputWordWrapMenuItem.IsChecked = Output.WordWrap;
             if (Settings.Default.WindowMaxmized)
@@ -88,6 +89,7 @@ namespace FSharpPlayground
                 Settings.Default.EditorWidth = editorWidthWhenOutputShown;
                 Settings.Default.Code = FSharpEditor.Text;
                 Settings.Default.RunInNewConsole = SetRunInNewConsole.IsChecked;
+                Settings.Default.UsingGlotIO = SetUsingGlotIOAPI.IsChecked;
                 Settings.Default.WordWrapOutput = Output.WordWrap;
                 Settings.Default.Save();
 
@@ -155,6 +157,45 @@ namespace FSharpPlayground
             }
         }
 
+        struct GlotIOResponse
+        {
+            public string stdout { get; set; }
+            public string stderr { get; set; }
+            public string error { get; set; }
+        };
+
+        private string RunInGlotIO(string src)
+        {
+            using (var http = new System.Net.Http.HttpClient())
+            {
+                const string auth = "3e0a4bed-18f8-430d-9fad-c17e18392687";
+                http.DefaultRequestHeaders.Add("Authorization", "Token " + auth);
+                const string url = "https://run.glot.io/languages/fsharp/latest";
+                var json = new { files = new object[] { new { name = "main.fs", content = src } } };
+                var jsonStr = Newtonsoft.Json.JsonConvert.SerializeObject(json);
+                using (var content = new System.Net.Http.StringContent(jsonStr))
+                {
+                    content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    var response = http.PostAsync(url, content);
+                    var responseStr = response.Result.Content.ReadAsStringAsync().Result;
+                    var responseJson = Newtonsoft.Json.JsonConvert.DeserializeObject<GlotIOResponse>(responseStr);
+                    var sb = new StringBuilder();
+                    if (!System.String.IsNullOrEmpty(responseJson.stdout)) sb.Append(responseJson.stdout);
+                    if(!System.String.IsNullOrEmpty(responseJson.stderr))
+                    {
+                        if (sb.Length > 0) sb.AppendLine();
+                        sb.Append(responseJson.stderr);
+                    }
+                    if (!System.String.IsNullOrEmpty(responseJson.error))
+                    {
+                        if (sb.Length > 0) sb.AppendLine();
+                        sb.Append(responseJson.error);
+                    }
+                    return sb.ToString();
+                }
+            }
+        }
+
         private void Run(object sender = null,RoutedEventArgs e = null)
         {
             if (!storyEditorEnabled) return;
@@ -164,6 +205,7 @@ namespace FSharpPlayground
             var src = FSharpEditor.Text;
 
             var runInOutput = !SetRunInNewConsole.IsChecked;
+            var runInGlotIO = SetUsingGlotIOAPI.IsChecked;
 
             if (EditorOutputSplitter.Visibility != Visibility.Visible && runInOutput)
                 HideOrShowOutput();
@@ -174,6 +216,22 @@ namespace FSharpPlayground
             {
                 var tempTarget = tempDir + "temp.exe";
                 KillTempExe();
+
+                if (runInGlotIO)
+                {
+                    try
+                    {
+                        var result = RunInGlotIO(src);
+                        Dispatcher.Invoke(() => Output.Text = result);
+                        Dispatcher.Invoke(() => SetEditorEnabled(true));
+                        return;
+                    }
+                    catch (Exception)
+                    {
+                        Dispatcher.Invoke(() => Output.Clear());
+                    }
+                }
+
                 CompileToExe(tempTarget, src);
                 CopyDLLsToTemp();
 
@@ -587,6 +645,17 @@ namespace FSharpPlayground
             foreach (var i in waitForClean)
                 File.Delete(tempDir + i);
             waitForClean.Clear();
+        }
+
+        private void SetUsingGlotIOAPI_Checked(object sender, RoutedEventArgs e)
+        {
+            SetRunInNewConsole.IsEnabled = false;
+            SetRunInNewConsole.IsChecked = false;
+        }
+
+        private void SetUsingGlotIOAPI_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SetRunInNewConsole.IsEnabled = true;
         }
     }
 }

@@ -75,6 +75,7 @@
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll"/>
                         <Separator/>
                         <MenuItem Header="Run in a new console window" IsCheckable="True" Name="SetRunInNewConsole" />
+                        <MenuItem Header="Using glot.io API" IsCheckable="True" Name="SetUsingGlotIOAPI" Checked="SetUsingGlotIOAPI_Checked" Unchecked="SetUsingGlotIOAPI_Unchecked"/>
                         <!-- <MenuItem Header="References..."/> -->
 
                     </fw:AcrylicContextMenu>
