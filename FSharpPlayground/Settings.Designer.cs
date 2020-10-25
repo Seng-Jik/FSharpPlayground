@@ -121,25 +121,13 @@ namespace FSharpPlayground {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UsingGlotIO {
             get {
                 return ((bool)(this["UsingGlotIO"]));
             }
             set {
                 this["UsingGlotIO"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GlotIOAuth {
-            get {
-                return ((string)(this["GlotIOAuth"]));
-            }
-            set {
-                this["GlotIOAuth"] = value;
             }
         }
     }
