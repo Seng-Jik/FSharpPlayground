@@ -16,6 +16,7 @@ using Microsoft.FSharp.Core;
 using System.IO;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Interop;
 
 namespace FSharpPlayground
 {
@@ -29,19 +30,29 @@ namespace FSharpPlayground
 
         readonly string tempDir = Environment.GetEnvironmentVariable("TEMP") + "/";
 
+        SourceChord.FluentWPF.ApplicationTheme currentTheme = (SourceChord.FluentWPF.ApplicationTheme)(-1);
+
+        private void configHighlight()
+        {
+            if (currentTheme == SourceChord.FluentWPF.SystemTheme.AppTheme) return;
+            currentTheme = SourceChord.FluentWPF.SystemTheme.AppTheme;
+
+            using (var highlightxml = new StringReader(
+                SynaxHighlight.Synax.Replace(
+                    "<!-- __COLORS__ -->",
+                    currentTheme == SourceChord.FluentWPF.ApplicationTheme.Dark ?
+                        SynaxHighlight.DarkThemeColors : SynaxHighlight.LightThemeColors)))
+            using (var r = new System.Xml.XmlTextReader(highlightxml))
+                FSharpEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(
+                    r, ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
 
             // 配置编辑器
-            using (var highlightxml = new StringReader(
-                SynaxHighlight.Synax.Replace(
-                    "<!-- __COLORS__ -->",
-                    SourceChord.FluentWPF.SystemTheme.AppTheme == SourceChord.FluentWPF.ApplicationTheme.Dark ?
-                        SynaxHighlight.DarkThemeColors : SynaxHighlight.LightThemeColors)))
-            using (var r = new System.Xml.XmlTextReader(highlightxml))
-                FSharpEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(
-                    r, ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance);
+            configHighlight();
 
             FSharpEditor.Options.ConvertTabsToSpaces = true;
             FSharpEditor.Options.EnableEmailHyperlinks = true;
@@ -113,6 +124,22 @@ namespace FSharpPlayground
                     break;
                 }
             }
+
+            Loaded += (o, e) => 
+                HwndSource.FromHwnd(new WindowInteropHelper(this).Handle).AddHook(new HwndSourceHook(WndProc));
+        }
+
+        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case 0x001A:/* WM_WININICHANGE */
+                    configHighlight();
+                    handled = true;
+                    break;
+                default: break;
+            }
+            return (System.IntPtr)0;
         }
 
         bool storyEditorEnabled = true;

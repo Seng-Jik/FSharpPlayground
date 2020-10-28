@@ -10,13 +10,13 @@
     <Product>F# Playground</Product>
     <PackageProjectUrl>https://github.com/SmallLuma/FSharpPlayground</PackageProjectUrl>
     <PackageIcon>fsharp256.ico</PackageIcon>
-    <RepositoryUrl>https://github.com/SmallLuma/FSharpPlayground</RepositoryUrl>
-    <Description>https://github.com/SmallLuma/FSharpPlayground</Description>
-    <PackageReleaseNotes>https://github.com/SmallLuma/FSharpPlayground</PackageReleaseNotes>
-    <Copyright>https://github.com/SmallLuma/FSharpPlayground</Copyright>
-    <AssemblyVersion>1.2.1.0</AssemblyVersion>
-    <FileVersion>1.2.1.0</FileVersion>
-    <Version>1.2.1</Version>
+    <RepositoryUrl>https://github.com/Seng-Jik/FSharpPlayground</RepositoryUrl>
+    <Description>https://github.com/Seng-Jik/FSharpPlayground</Description>
+    <PackageReleaseNotes>https://github.com/Seng-Jik/FSharpPlayground</PackageReleaseNotes>
+    <Copyright>https://github.com/Seng-Jik/FSharpPlayground</Copyright>
+    <AssemblyVersion>1.2.3.0</AssemblyVersion>
+    <FileVersion>1.2.3.0</FileVersion>
+    <Version>1.2.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
