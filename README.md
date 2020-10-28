@@ -21,7 +21,7 @@ You can install
 # Changelog
 
 ## v1.2.3
-1. Bug fix: Switch synax highlighting config while switch Windows 10 Light/Dark mode.
+1. Bug fix: Switch syntax highlighting config while switch Windows 10 Light/Dark mode.
 
 ## v1.2.2
 1. Code Runner: Runner can be set to using glot.io API.
