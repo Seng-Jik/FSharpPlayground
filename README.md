@@ -20,6 +20,9 @@ You can install
 
 # Changelog
 
+# v1.2.4
+1. Update dependents.
+
 ## v1.2.3
 1. Bug fix: Switch syntax highlighting config while switch Windows 10 Light/Dark mode.
 

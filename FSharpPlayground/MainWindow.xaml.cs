@@ -129,19 +129,6 @@ namespace FSharpPlayground
                 HwndSource.FromHwnd(new WindowInteropHelper(this).Handle).AddHook(new HwndSourceHook(WndProc));
         }
 
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            switch (msg)
-            {
-                case 0x001A:/* WM_WININICHANGE */
-                    configHighlight();
-                    handled = true;
-                    break;
-                default: break;
-            }
-            return (System.IntPtr)0;
-        }
-
         bool storyEditorEnabled = true;
         private void SetEditorEnabled(bool enabled)
         {
